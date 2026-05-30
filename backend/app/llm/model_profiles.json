@@ -1,0 +1,135 @@
+{
+  "profiles": [
+    {
+      "id": "deepseek:deepseek-chat",
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "display_name": "DeepSeek Chat",
+      "capabilities": {
+        "text": true,
+        "structured_json": true,
+        "reasoning": "high",
+        "code": "high",
+        "chinese": "high",
+        "long_text": "medium",
+        "creativity": "medium",
+        "image_generation": false
+      },
+      "task_quality": {
+        "exercise_generation": 0.9,
+        "grading": 0.86,
+        "explanation": 0.88,
+        "plan_generation": 0.82,
+        "structured_rewrite": 0.84
+      },
+      "cost_level": "low",
+      "latency_level": "medium",
+      "reliability": 0.82,
+      "verified": true
+    },
+    {
+      "id": "deepseek:deepseek-reasoner",
+      "provider": "deepseek",
+      "model": "deepseek-reasoner",
+      "display_name": "DeepSeek Reasoner",
+      "capabilities": {
+        "text": true,
+        "structured_json": true,
+        "reasoning": "very_high",
+        "code": "high",
+        "chinese": "high",
+        "long_text": "medium",
+        "creativity": "medium",
+        "image_generation": false
+      },
+      "task_quality": {
+        "exercise_generation": 0.88,
+        "grading": 0.92,
+        "explanation": 0.94,
+        "game_level_design": 0.78,
+        "structured_rewrite": 0.8
+      },
+      "cost_level": "medium",
+      "latency_level": "slow",
+      "reliability": 0.8,
+      "verified": true
+    },
+    {
+      "id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "display_name": "GPT-4o mini",
+      "capabilities": {
+        "text": true,
+        "structured_json": true,
+        "reasoning": "medium",
+        "code": "medium",
+        "chinese": "high",
+        "long_text": "medium",
+        "creativity": "high",
+        "image_generation": false
+      },
+      "task_quality": {
+        "plan_generation": 0.86,
+        "podcast_script": 0.88,
+        "storyboard": 0.86,
+        "game_level_design": 0.82,
+        "structured_rewrite": 0.88
+      },
+      "cost_level": "low",
+      "latency_level": "fast",
+      "reliability": 0.88,
+      "verified": true
+    },
+    {
+      "id": "doubao:doubao-seedream",
+      "provider": "doubao",
+      "model": "doubao-seedream",
+      "display_name": "Doubao Image",
+      "capabilities": {
+        "text": false,
+        "structured_json": false,
+        "reasoning": "low",
+        "code": "low",
+        "chinese": "high",
+        "long_text": "low",
+        "creativity": "high",
+        "image_generation": true
+      },
+      "task_quality": {
+        "image_generation": 0.92,
+        "visual_asset_generation": 0.9
+      },
+      "cost_level": "medium",
+      "latency_level": "medium",
+      "reliability": 0.76,
+      "verified": false
+    },
+    {
+      "id": "ollama:qwen2.5",
+      "provider": "ollama",
+      "model": "qwen2.5",
+      "display_name": "Local Qwen",
+      "capabilities": {
+        "text": true,
+        "structured_json": true,
+        "reasoning": "medium",
+        "code": "medium",
+        "chinese": "high",
+        "long_text": "medium",
+        "creativity": "medium",
+        "image_generation": false
+      },
+      "task_quality": {
+        "plan_generation": 0.7,
+        "exercise_generation": 0.72,
+        "explanation": 0.72,
+        "structured_rewrite": 0.68
+      },
+      "cost_level": "free",
+      "latency_level": "medium",
+      "reliability": 0.7,
+      "verified": false
+    }
+  ]
+}

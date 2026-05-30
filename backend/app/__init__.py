@@ -1,0 +1,2 @@
+"""FullMind backend package."""
+
