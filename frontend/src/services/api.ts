@@ -10,12 +10,14 @@ import type {
 
 const API_BASES = import.meta.env.VITE_API_BASE
   ? [import.meta.env.VITE_API_BASE]
-  : Array.from(
-      new Set([
-        `${window.location.protocol}//${window.location.hostname}:8010`,
-        `${window.location.protocol}//127.0.0.1:8010`
-      ])
-    )
+  : import.meta.env.DEV
+    ? Array.from(
+        new Set([
+          `${window.location.protocol}//${window.location.hostname}:8010`,
+          `${window.location.protocol}//127.0.0.1:8010`
+        ])
+      )
+    : ['']
 
 class HttpResponseError extends Error {}
 
@@ -72,6 +74,7 @@ export const api = {
     title?: string
     subject_area: string
     goal_mode: string
+    planning_mode: string
     selected_methods: string[]
     selected_experiences?: string[]
     duration_days: number

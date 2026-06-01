@@ -49,12 +49,15 @@ class PlanGenerator:
         duration_days: int,
         daily_minutes: int,
         goal_mode: str,
+        planning_mode: str = "adaptive",
     ) -> list[TaskDraft]:
+        planning_mode = self._normalize_planning_mode(planning_mode)
         experience_mix = self.method_engine.build_experience_mix(selected_methods)
         tasks: list[TaskDraft] = []
+        total_units = min(duration_days, 8) if planning_mode == "p_mode" else duration_days
 
-        for day in range(1, duration_days + 1):
-            phase = self._phase_for_day(day, duration_days)
+        for day in range(1, total_units + 1):
+            phase = self._phase_for_day(day, total_units)
             knowledge_focus = self._knowledge_focus(day, phase, goal_mode)
             day_experiences = self._day_experiences(
                 day=day,
@@ -64,8 +67,9 @@ class PlanGenerator:
                 knowledge_focus=knowledge_focus,
                 experience_mix=experience_mix,
                 daily_minutes=daily_minutes,
+                planning_mode=planning_mode,
             )
-            difficulty = self._difficulty_for_day(day, duration_days)
+            difficulty = self._difficulty_for_day(day, total_units)
 
             for position, experience_mode in enumerate(day_experiences, start=1):
                 tasks.append(
@@ -79,9 +83,14 @@ class PlanGenerator:
                         daily_minutes=daily_minutes,
                         task_count=len(day_experiences),
                         difficulty=difficulty,
+                        planning_mode=planning_mode,
                     )
                 )
         return tasks
+
+    def _normalize_planning_mode(self, planning_mode: str) -> str:
+        aliases = {"roadmap": "j_mode", "flow": "p_mode", "hybrid": "adaptive"}
+        return aliases.get(planning_mode, planning_mode)
 
     def _phase_for_day(self, day: int, duration_days: int) -> str:
         progress = day / max(1, duration_days)
@@ -114,12 +123,18 @@ class PlanGenerator:
         knowledge_focus: str,
         experience_mix: dict[str, float],
         daily_minutes: int,
+        planning_mode: str,
     ) -> list[str]:
         available = [experience for experience in CORE_EXPERIENCE_ORDER if experience in experience_mix]
         if not available:
             available = ["drill", "game", "podcast", "project_lab"]
 
-        max_tasks = 2 if daily_minutes < 40 else 3
+        if planning_mode == "p_mode":
+            max_tasks = 3 if daily_minutes < 50 else 4
+        elif planning_mode == "adaptive":
+            max_tasks = 2 if daily_minutes < 35 else 3
+        else:
+            max_tasks = 1 if daily_minutes < 25 else 2 if daily_minutes < 55 else 3
         scores = self._score_experiences(
             goal_summary=goal_summary,
             knowledge_focus=knowledge_focus,
@@ -130,7 +145,25 @@ class PlanGenerator:
             experience_mix=experience_mix,
         )
         ranked = sorted(available, key=lambda item: scores[item], reverse=True)
+        if planning_mode == "p_mode":
+            return self._balanced_pool_slice(ranked, day, max_tasks)
         return ranked[:max_tasks]
+
+    def _balanced_pool_slice(self, ranked: list[str], day: int, max_tasks: int) -> list[str]:
+        if len(ranked) <= max_tasks:
+            return ranked
+        # P mode is a choice pool: keep the strongest fit first, then expose a few
+        # nearby alternatives so the user can enter learning from today's state.
+        start = (day - 1) % len(ranked)
+        rotated = ranked[start:] + ranked[:start]
+        strongest = ranked[0]
+        result = [strongest]
+        for item in rotated:
+            if item not in result:
+                result.append(item)
+            if len(result) >= max_tasks:
+                break
+        return result
 
     def _score_experiences(
         self,
@@ -430,6 +463,7 @@ class PlanGenerator:
         daily_minutes: int,
         task_count: int,
         difficulty: float,
+        planning_mode: str,
     ) -> TaskDraft:
         minutes = self._minutes_for_task(daily_minutes, task_count, position)
         phase_label = {"foundation": "地基", "practice": "训练", "integration": "整合"}[phase]
@@ -507,10 +541,15 @@ class PlanGenerator:
             experience_mode,
             templates["drill"],
         )
+        title_prefix = {
+            "j_mode": f"Day {day_number}",
+            "p_mode": f"入口 {((day_number - 1) * task_count) + position}",
+            "adaptive": f"Day {day_number} 可选入口",
+        }.get(planning_mode, f"Day {day_number}")
         return TaskDraft(
             day_number=day_number,
             position=position,
-            title=f"Day {day_number} · {title}",
+            title=f"{title_prefix} · {title}",
             description=description,
             method_code=method_code,
             experience_mode=experience_mode,

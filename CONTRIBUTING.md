@@ -8,6 +8,7 @@ FathomSeed is still early, so the best contributions are clear, focused, and eas
 
 - Better local question banks
 - Better activity pages for drills, learning games, podcasts, flashcards, projects, and dialogue
+- Better J Mode, P Mode, and Adaptive Mode recommendation logic
 - Cleaner learning method scoring
 - Bug fixes
 - Small UX improvements
@@ -22,6 +23,7 @@ Please keep these ideas intact:
 - SQLite is the MVP source of truth.
 - LLMs should enhance the product, not become a startup requirement.
 - A plan change should create a new version instead of overwriting history.
+- J Mode should feel planned, P Mode should feel freely explorable, and Adaptive Mode should keep a route while allowing multiple entry points.
 - Mixed mode should make multiple experiences available, not force every mode into every plan.
 - UX should feel like a learning product, not an admin dashboard.
 
@@ -84,6 +86,7 @@ Fix plan pivot duplicate event handling
 
 - 更好的本地题库
 - 更完整的刷题、学习游戏、播客、闪卡、项目、对话体验页
+- 更好的 J人模式、P人模式、自适应模式推荐逻辑
 - 更合理的学习方式评分逻辑
 - Bug 修复
 - 小而有效的 UX 改进
@@ -98,6 +101,7 @@ Fix plan pivot duplicate event handling
 - SQLite 是 MVP 的权威状态源。
 - 大模型是增强能力，不是启动前提。
 - 调整计划时生成新版本，不覆盖历史。
+- J人模式要有清晰计划感，P人模式要有自由探索感，自适应模式要有主线但保留多个入口。
 - 混合模式是让多种体验进入候选池，不是强迫每个计划都出现所有模式。
 - 界面应该像学习产品，不要像后台管理系统。
 

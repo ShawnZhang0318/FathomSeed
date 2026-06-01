@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api import exercises, feedback, intent, llm, methods, plans, profiles, strategies, sync, tasks
 from app.core.llm_provider import LLMProvider
@@ -8,8 +11,8 @@ from app.db.session import init_db
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="FullMind",
-        description="Local First + LLM Enhanced learning guide backend.",
+        title="FathomSeed",
+        description="AI learning experience engine with a built-in fallback and optional LLM enhancement.",
         version="0.1.0",
     )
     app.add_middleware(
@@ -44,6 +47,10 @@ def create_app() -> FastAPI:
             "llm_enabled": llm_state.enabled,
             "llm_models": llm_state.models,
         }
+
+    static_dir = Path(__file__).resolve().parent / "static"
+    if static_dir.exists():
+        app.mount("/", StaticFiles(directory=static_dir, html=True), name="web")
 
     return app
 

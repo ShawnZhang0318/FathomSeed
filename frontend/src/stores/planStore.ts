@@ -29,6 +29,7 @@ export const planStore = reactive({
 function normalizePlan(plan: LearningPlan): LearningPlan {
   return {
     ...plan,
+    planning_mode: plan.planning_mode ?? 'adaptive',
     tasks: plan.tasks.map(normalizeTask)
   }
 }

@@ -35,6 +35,7 @@ class LearningPlan(TimestampMixin, Base):
     title: Mapped[str] = mapped_column(String(180), nullable=False)
     goal_summary: Mapped[str] = mapped_column(Text, nullable=False)
     goal_mode: Mapped[str] = mapped_column(String(48), default="overview", nullable=False)
+    planning_mode: Mapped[str] = mapped_column(String(32), default="adaptive", nullable=False)
     method_policy: Mapped[str] = mapped_column(String(48), default="mixed", nullable=False)
     method_mix: Mapped[dict[str, float]] = mapped_column(JSON, default=dict, nullable=False)
     experience_policy: Mapped[str] = mapped_column(String(48), default="mixed", nullable=False)

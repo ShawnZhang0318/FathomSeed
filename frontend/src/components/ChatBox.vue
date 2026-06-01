@@ -38,7 +38,7 @@ function submit() {
           今天想抵达哪里？
         </h1>
         <p class="mx-auto mt-5 max-w-2xl text-base leading-8 muted-text md:text-lg">
-          FullMind 会把目标拆成路线、方法配比、练习和反馈循环。不开模型也能用，接入模型后会更懂你。
+          FathomSeed 会把目标拆成学习节奏、体验入口、练习和反馈循环。不开模型也能用，接入模型后会更懂你。
         </p>
       </div>
 
@@ -87,7 +87,7 @@ function submit() {
 
           <div class="grid items-end">
             <button class="primary-button w-full md:min-w-40" :disabled="loading" @click="submit">
-              生成路线
+              生成学习方案
               <ArrowUpRight :size="18" aria-hidden="true" />
             </button>
           </div>

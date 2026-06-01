@@ -49,6 +49,7 @@ class PivotEngine:
             title=plan.title,
             goal_summary=plan.goal_summary,
             goal_mode=plan.goal_mode,
+            planning_mode=plan.planning_mode,
             method_policy="mixed",
             method_mix=new_method_mix,
             experience_policy="mixed",

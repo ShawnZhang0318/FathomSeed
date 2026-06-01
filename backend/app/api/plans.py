@@ -35,6 +35,7 @@ def generate_plan(payload: PlanGenerateRequest, db: Session = Depends(get_db)) -
     method_policy = method_engine.method_policy(selected_experiences)
     experience_mix = method_engine.build_experience_mix(selected_experiences)
     experience_policy = method_engine.experience_policy(selected_experiences)
+    planning_mode = _normalize_planning_mode(payload.planning_mode)
     plan_group_id = str(uuid.uuid4())
     plan = LearningPlan(
         user_id=profile.id,
@@ -44,6 +45,7 @@ def generate_plan(payload: PlanGenerateRequest, db: Session = Depends(get_db)) -
         title=payload.title or payload.goal_summary[:80],
         goal_summary=payload.goal_summary,
         goal_mode=payload.goal_mode,
+        planning_mode=planning_mode,
         method_policy=method_policy,
         method_mix=method_mix,
         experience_policy=experience_policy,
@@ -63,6 +65,7 @@ def generate_plan(payload: PlanGenerateRequest, db: Session = Depends(get_db)) -
         duration_days=payload.duration_days,
         daily_minutes=payload.daily_minutes,
         goal_mode=payload.goal_mode,
+        planning_mode=planning_mode,
     ):
         db.add(
             PlanTask(
@@ -140,3 +143,12 @@ def _load_plan(db: Session, plan_id: str) -> LearningPlan:
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
     return plan
+
+
+def _normalize_planning_mode(planning_mode: str) -> str:
+    aliases = {
+        "roadmap": "j_mode",
+        "flow": "p_mode",
+        "hybrid": "adaptive",
+    }
+    return aliases.get(planning_mode, planning_mode)

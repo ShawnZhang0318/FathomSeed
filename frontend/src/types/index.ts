@@ -18,6 +18,8 @@ export interface MethodOption {
   description: string
 }
 
+export type PlanningMode = 'j_mode' | 'p_mode' | 'adaptive'
+
 export interface PlanTask {
   id: string
   plan_id: string
@@ -50,6 +52,7 @@ export interface LearningPlan {
   title: string
   goal_summary: string
   goal_mode: string
+  planning_mode: PlanningMode
   method_policy: string
   method_mix: Record<string, number>
   experience_policy: string

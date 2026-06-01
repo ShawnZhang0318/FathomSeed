@@ -1,2 +1,1 @@
-"""FullMind backend package."""
-
+"""FathomSeed backend package."""

@@ -40,8 +40,8 @@ watchEffect(() => {
               <BookOpenCheck :size="22" aria-hidden="true" />
             </span>
             <div>
-              <span class="block text-lg font-black tracking-tight">FullMind</span>
-              <span class="hidden text-xs font-semibold soft-text sm:block">学习体验引擎</span>
+              <span class="block text-lg font-black tracking-tight">FathomSeed</span>
+              <span class="hidden text-xs font-semibold soft-text sm:block">悟道星火 · 学习体验引擎</span>
             </div>
           </div>
 

@@ -343,6 +343,57 @@ select {
   transform: translateY(-5px);
 }
 
+.mode-card {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 88% 6%, var(--accent-soft), transparent 14rem),
+    var(--surface-strong);
+  color: var(--text);
+  padding: 24px;
+  text-align: left;
+  box-shadow: 0 12px 38px rgba(15, 23, 42, 0.05);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.mode-card:hover,
+.mode-card.is-active {
+  border-color: color-mix(in srgb, var(--accent-2) 70%, var(--line));
+  box-shadow:
+    0 24px 56px rgba(79, 70, 229, 0.15),
+    0 0 0 5px var(--accent-soft);
+  transform: translateY(-5px);
+}
+
+.mode-card.is-active::after {
+  position: absolute;
+  inset: auto 22px 18px 22px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b5cf6, #2563eb, #06b6d4);
+  content: '';
+}
+
+.mode-card-badge {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  padding: 0 11px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .choice-icon {
   display: grid;
   height: 54px;
@@ -403,6 +454,35 @@ select {
 .day-progress-pill.is-complete {
   border-color: rgba(16, 185, 129, 0.4);
   background: rgba(16, 185, 129, 0.1);
+}
+
+.pool-entry-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 100% 0%, var(--accent-soft), transparent 13rem),
+    var(--surface-soft);
+  padding: 18px;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.pool-entry-card:hover {
+  border-color: color-mix(in srgb, var(--accent-2) 66%, var(--line));
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .pool-entry-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 .studio-panel {

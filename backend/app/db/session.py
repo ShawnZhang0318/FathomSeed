@@ -77,6 +77,8 @@ def _ensure_sqlite_columns() -> None:
         statements.append("ALTER TABLE learning_plans ADD COLUMN experience_policy VARCHAR(48) NOT NULL DEFAULT 'mixed'")
     if "experience_mix" not in plan_columns:
         statements.append("ALTER TABLE learning_plans ADD COLUMN experience_mix JSON NOT NULL DEFAULT '{}'")
+    if "planning_mode" not in plan_columns:
+        statements.append("ALTER TABLE learning_plans ADD COLUMN planning_mode VARCHAR(32) NOT NULL DEFAULT 'adaptive'")
     if "experience_mode" not in task_columns:
         statements.append("ALTER TABLE plan_tasks ADD COLUMN experience_mode VARCHAR(48) NOT NULL DEFAULT 'drill'")
     if "content_format" not in task_columns:

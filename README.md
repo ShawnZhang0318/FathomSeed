@@ -2,9 +2,9 @@
 
 **Turn goals into daily practice.**
 
-FathomSeed is an AI learning engine with a built-in local fallback. It turns a learning goal into a day-by-day journey of interactive study experiences.
+FathomSeed is an AI learning engine with a built-in fallback. It turns a learning goal into daily practice, flexible learning entry points, and interactive study experiences.
 
-Instead of giving people one static study plan, FathomSeed breaks a goal into daily tasks and chooses the best experience mode for each task: drills, adaptive learning games, podcasts, flashcards, project labs, mentor dialogue, short video or microfilm experiences, and cinematic stories.
+Instead of giving people one static study plan, FathomSeed breaks a goal into the right learning rhythm and chooses the best experience mode for each task: drills, adaptive learning games, podcasts, flashcards, project labs, mentor dialogue, short video or microfilm experiences, and cinematic stories.
 
 It works without an API key. LLMs are optional upgrades for better content, richer exercises, grading, explanations, and personalized rewrites.
 
@@ -24,8 +24,9 @@ Feedback changes the next version of the plan instead of rewriting the past.
 ## Core Ideas
 
 - **LLM enhanced:** connect providers later for smarter generation and feedback.
+- **Rhythm-aware planning:** choose J Mode, P Mode, or Adaptive Mode before generating the learning system.
 - **Multi-mode learning:** tasks can become drills, learning games, podcasts, flashcards, videos, stories, projects, or dialogue.
-- **Daily planning:** goals become concrete daily tasks with time budgets.
+- **Daily or flexible planning:** goals can become a clear daily roadmap, a free-choice task pool, or a hybrid of both.
 - **Adaptive method mix:** feedback and performance can shift future learning methods.
 - **Versioned plans:** pivots create V2, V3, and later versions instead of overwriting history.
 - **Offline-friendly UX:** the PWA can view plans and queue feedback offline.
@@ -34,6 +35,7 @@ Feedback changes the next version of the plan instead of rewriting the past.
 
 - Goal clarification
 - Strategy selection
+- J Mode, P Mode, and Adaptive Mode
 - Learning method selection
 - No-provider fallback for the basic flow
 - Multi-mode task planning
@@ -59,6 +61,16 @@ FathomSeed can plan with these learning experiences:
 - **Mixed:** lets the task scoring engine choose from all modes
 
 Mixed mode does not force every mode to appear. It only makes every mode available. The task itself still decides what fits best.
+
+## Learning Rhythm Modes
+
+FathomSeed separates "what to learn" from "how tightly the day is planned."
+
+- **J Mode:** clear day-by-day tasks. Best for learners who want structure, deadlines, and a concrete daily checklist.
+- **P Mode:** a flexible task pool. Best for learners who want to choose from today's drills, games, podcasts, projects, dialogue, flashcards, or short-video experiences based on energy and curiosity.
+- **Adaptive Mode:** a main route with flexible entry points. The system protects the learning direction, while the learner chooses how to enter today's work.
+
+Internally, these modes are stored as `j_mode`, `p_mode`, and `adaptive`.
 
 ## Tech Stack
 
@@ -108,6 +120,35 @@ The frontend calls the backend on port `8010` by default. You can override it wi
 ```env
 VITE_API_BASE=http://127.0.0.1:8010
 ```
+
+## Railway Deployment
+
+The repository includes a root `Dockerfile` and `railway.toml`.
+
+The Railway deployment builds the Vue frontend, copies it into the FastAPI
+backend, and serves the web UI and API from one service.
+
+Recommended Railway setup:
+
+```text
+Create Project -> Deploy from GitHub repo
+Builder: Dockerfile
+Health check path: /health
+Volume mount path: /app/backend/storage
+```
+
+Recommended variables:
+
+```env
+LLM_PROVIDER=none
+FULLMIND_STORAGE_DIR=storage
+FULLMIND_DB_FILENAME=fullmind_app.db
+FULLMIND_SQLITE_JOURNAL_MODE=WAL
+```
+
+Do not commit real API keys. Add model keys in Railway variables when needed.
+
+For this single-service deployment, leave `VITE_API_BASE` unset.
 
 ## LLM Mode
 
@@ -184,9 +225,9 @@ author. See [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md).
 
 **把目标变成每日可执行的练习。**
 
-FathomSeed 是一个带本地托底能力的 AI 学习引擎。它会把一个学习目标拆成按天推进的学习旅程，并把每天的任务变成不同的学习体验。
+FathomSeed 是一个带基础托底能力的 AI 学习引擎。它会把一个学习目标变成每日练习、自由学习入口和不同的互动学习体验。
 
-它不只是生成一张计划表，而是会根据任务特点选择合适的体验模式：刷题、学习游戏、播客、闪卡、项目实验室、导师对话、短视频/微电影、故事化理解。
+它不只是生成一张计划表，而是先判断更适合的学习节奏，再根据任务特点选择合适的体验模式：刷题、学习游戏、播客、闪卡、项目实验室、导师对话、短视频/微电影、故事化理解。
 
 默认不需要 API Key，也不需要接入大模型。接入 LLM 后，可以获得更好的内容生成、练习题、批改、解释和个性化重写。
 
@@ -206,8 +247,9 @@ FathomSeed 想做的是另一件事：
 ## 核心理念
 
 - 模型增强：接入大模型后升级为智能模式。
+- 学习节奏：支持 J人模式、P人模式和自适应模式。
 - 多体验学习：任务可以变成刷题、学习游戏、播客、闪卡、视频、故事、项目或对话。
-- 按天规划：把目标拆成每天能完成的任务。
+- 灵活规划：可以生成按天路线，也可以生成自由任务池。
 - 自适应方法：根据反馈和表现调整后续学习方式。
 - 计划版本化：调整计划时生成 V2/V3，不覆盖历史。
 - 离线友好：PWA可以离线查看计划并缓存反馈。
@@ -216,6 +258,7 @@ FathomSeed 想做的是另一件事：
 
 - 目标澄清
 - 方案选择
+- J人模式、P人模式、自适应模式
 - 学习方法选择
 - 没有配置模型时的基础托底流程
 - 多体验任务规划
@@ -241,6 +284,16 @@ FathomSeed 当前支持这些学习体验：
 - 混合：让系统根据任务评分自动选择
 
 混合模式不会强行让所有模式都出现。它只是把所有模式放进候选池，最终仍然由任务本身决定。
+
+## 学习节奏模式
+
+FathomSeed 会把“学什么”和“每天被安排得多紧”分开。
+
+- J人模式：清晰的按天任务。适合喜欢计划、截止日期和每日清单的人。
+- P人模式：自由任务池。适合想根据当天状态，从刷题、游戏、播客、项目、对话、闪卡或短视频里自由选择入口的人。
+- 自适应模式：有主线，也有选择权。系统守住阶段目标，用户选择今天怎么进入学习。
+
+系统内部对应为 `j_mode`、`p_mode` 和 `adaptive`。
 
 ## 快速启动
 
@@ -273,6 +326,34 @@ http://127.0.0.1:5183
 ```env
 VITE_API_BASE=http://127.0.0.1:8010
 ```
+
+## Railway 部署
+
+仓库根目录已经包含 `Dockerfile` 和 `railway.toml`。
+
+Railway 部署时会先构建 Vue 前端，再把静态文件复制进 FastAPI 后端，最终由一个服务同时提供网页和 API。
+
+推荐 Railway 设置：
+
+```text
+Create Project -> Deploy from GitHub repo
+Builder: Dockerfile
+Health check path: /health
+Volume mount path: /app/backend/storage
+```
+
+推荐环境变量：
+
+```env
+LLM_PROVIDER=none
+FULLMIND_STORAGE_DIR=storage
+FULLMIND_DB_FILENAME=fullmind_app.db
+FULLMIND_SQLITE_JOURNAL_MODE=WAL
+```
+
+不要提交真实 API Key。后续需要接入模型时，把 Key 放到 Railway Variables 里。
+
+这个单服务部署方案不需要设置 `VITE_API_BASE`。
 
 ## 大模型模式
 

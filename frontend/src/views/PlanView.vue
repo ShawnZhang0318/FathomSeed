@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, RotateCcw } from 'lucide-vue-next'
+import { ArrowLeft, CalendarCheck2, Compass, RotateCcw, Sparkles } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import ExercisePanel from '../components/ExercisePanel.vue'
 import TaskTimeline from '../components/TaskTimeline.vue'
@@ -23,6 +23,38 @@ const pivotFeedbackTypes = new Set([
 ])
 
 const plan = computed(() => planStore.plan)
+const planningMode = computed(() => plan.value?.planning_mode ?? 'adaptive')
+const modeMeta = computed(() => {
+  if (planningMode.value === 'j_mode') {
+    return {
+      title: 'J人模式',
+      eyebrow: '清晰日程',
+      icon: CalendarCheck2,
+      description: '每天照着路线推进，完成当天所有任务后自动打卡。',
+      progressTitle: '每日完成度',
+      progressHint: '完成当天全部入口后打卡'
+    }
+  }
+  if (planningMode.value === 'p_mode') {
+    return {
+      title: 'P人模式',
+      eyebrow: '自由任务池',
+      icon: Compass,
+      description: '系统准备多个学习入口，你按今天的状态自由选择。',
+      progressTitle: '任务池进度',
+      progressHint: '完成任意入口都会训练系统偏好'
+    }
+  }
+  return {
+    title: '自适应模式',
+    eyebrow: '主线 + 自选入口',
+    icon: Sparkles,
+    description: '系统守住阶段目标，你选择今天用哪种体验进入。',
+    progressTitle: '今日达标度',
+    progressHint: '达到 70% 即视为今日达标'
+  }
+})
+const dayTargetPercent = computed(() => (planningMode.value === 'adaptive' ? 70 : 100))
 const totalMinutes = computed(() =>
   plan.value?.tasks.reduce((sum, task) => sum + task.estimated_minutes, 0) ?? 0
 )
@@ -49,12 +81,32 @@ const dayProgress = computed(() => {
     return {
       dayNumber,
       percent,
-      isComplete: percent >= 100,
+      isComplete: percent >= dayTargetPercent.value,
       taskCount: tasks.length
     }
   })
 })
 const currentDay = computed(() => dayProgress.value.find((day) => !day.isComplete) ?? dayProgress.value[0])
+const poolProgress = computed(() => {
+  if (!plan.value?.tasks.length) return 0
+  const total = plan.value.tasks.reduce((sum, task) => sum + taskProgress(task), 0)
+  return Math.round(total / plan.value.tasks.length)
+})
+const recommendedTasks = computed(() => {
+  if (!plan.value) return []
+  const openTasks = plan.value.tasks.filter((task) => taskProgress(task) < 100)
+  if (planningMode.value === 'p_mode') {
+    return openTasks.slice(0, 6)
+  }
+  const dayNumber = currentDay.value?.dayNumber ?? 1
+  return plan.value.tasks.filter((task) => task.day_number === dayNumber).slice(0, 4)
+})
+const recommendationTitle = computed(() => {
+  if (planningMode.value === 'p_mode') return '今天想从哪里开始？'
+  if (planningMode.value === 'adaptive') return '今日主线入口'
+  return '今日任务'
+})
+const returnLabel = computed(() => (planningMode.value === 'p_mode' ? '返回任务池' : '返回计划'))
 const activeActivityProgress = computed(() =>
   activeActivityTask.value ? taskProgress(activeActivityTask.value) : 0
 )
@@ -178,9 +230,19 @@ function clampProgress(value: number): number {
 
 function announceDayCompletion(dayNumber: number) {
   if (!plan.value) return
+  if (planningMode.value === 'p_mode') {
+    message.value = '已记录一次学习进展，任务池会继续根据你的选择调整'
+    return
+  }
   const dayTasks = plan.value.tasks.filter((task) => task.day_number === dayNumber)
-  if (dayTasks.length > 0 && dayTasks.every((task) => taskProgress(task) >= 100)) {
-    message.value = `Day ${dayNumber} 已完成，今日计划已自动打卡`
+  if (dayTasks.length > 0) {
+    const percent = Math.round(dayTasks.reduce((sum, task) => sum + taskProgress(task), 0) / dayTasks.length)
+    if (percent >= dayTargetPercent.value) {
+      message.value =
+        planningMode.value === 'adaptive'
+          ? `Day ${dayNumber} 已达标，今日主线已自动打卡`
+          : `Day ${dayNumber} 已完成，今日计划已自动打卡`
+    }
   }
 }
 
@@ -231,7 +293,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
         <div class="flex min-w-0 items-center gap-3">
           <button class="text-button shrink-0" @click="closeActivity">
             <ArrowLeft :size="16" aria-hidden="true" />
-            返回计划
+            {{ returnLabel }}
           </button>
           <div class="min-w-0">
             <p class="text-sm font-extrabold soft-text">{{ activeActivityLabel }}</p>
@@ -266,17 +328,53 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
     <section>
       <div class="surface-card mb-6 p-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p class="mb-2 text-sm font-extrabold soft-text">今日学习航线</p>
+          <div class="min-w-0">
+            <p class="mb-2 flex items-center gap-2 text-sm font-extrabold soft-text">
+              <component :is="modeMeta.icon" :size="16" aria-hidden="true" />
+              {{ modeMeta.eyebrow }} · {{ modeMeta.title }}
+            </p>
             <h1 class="text-3xl font-black tracking-[-0.04em] md:text-4xl">{{ plan.title }}</h1>
             <p class="mt-2 text-sm muted-text">
-              第 {{ plan.version }} 版路线 · {{ plan.daily_minutes }} 分钟/天 · {{ plan.generation_mode === 'local' ? '本地生成' : '智能增强' }}
+              第 {{ plan.version }} 版 · {{ plan.daily_minutes }} 分钟/天 · {{ plan.generation_mode === 'local' ? '本地生成' : '智能增强' }}
             </p>
+            <p class="mt-3 max-w-2xl text-sm leading-7 muted-text">{{ modeMeta.description }}</p>
           </div>
           <button class="text-button" @click="resetPlan">
             <RotateCcw :size="16" aria-hidden="true" />
             重新选择目标
           </button>
+        </div>
+      </div>
+      <div v-if="planningMode !== 'j_mode'" class="quiet-card mb-6 p-5 md:p-6">
+        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">
+              {{ planningMode === 'p_mode' ? 'Flow Pool' : 'Adaptive Today' }}
+            </p>
+            <h2 class="mt-2 text-2xl font-black tracking-[-0.035em]">{{ recommendationTitle }}</h2>
+            <p class="mt-2 text-sm leading-7 muted-text">{{ modeMeta.progressHint }}</p>
+          </div>
+          <span class="signal-chip">
+            {{ planningMode === 'p_mode' ? `任务池 ${poolProgress}%` : `今日 ${currentDay?.percent ?? 0}% / ${dayTargetPercent}%` }}
+          </span>
+        </div>
+        <div class="grid gap-3 md:grid-cols-2">
+          <article
+            v-for="task in recommendedTasks"
+            :key="task.id"
+            class="pool-entry-card"
+          >
+            <div class="min-w-0">
+              <p class="text-xs font-black soft-text">
+                {{ activityLabel(task) }} · {{ task.estimated_minutes }} 分钟 · {{ taskProgress(task) }}%
+              </p>
+              <h3 class="mt-2 text-base font-black leading-snug">{{ task.title }}</h3>
+              <p class="mt-2 line-clamp-2 text-sm leading-6 muted-text">{{ task.description }}</p>
+            </div>
+            <button class="primary-button" :disabled="busyTaskId === task.id" @click="startTask(task)">
+              进入
+            </button>
+          </article>
         </div>
       </div>
       <div class="mb-6 grid gap-4 md:grid-cols-3">
@@ -301,16 +399,16 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
         <div class="signal-chip justify-start">刷题 {{ practiceCount }} 组 · 游戏 {{ gameCount }} 个</div>
         <div class="signal-chip justify-start">项目 {{ projectCount }} 个 · {{ totalMinutes }} 分钟</div>
       </div>
-      <div class="quiet-card mb-6 p-5">
+      <div v-if="planningMode !== 'p_mode'" class="quiet-card mb-6 p-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">每日完成度</p>
+            <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">{{ modeMeta.progressTitle }}</p>
             <h2 class="mt-2 text-xl font-black">
               Day {{ currentDay?.dayNumber ?? 1 }} · {{ currentDay?.percent ?? 0 }}%
             </h2>
           </div>
           <span class="signal-chip">
-            {{ currentDay?.isComplete ? '今日已自动打卡' : `还剩 ${100 - (currentDay?.percent ?? 0)}%` }}
+            {{ currentDay?.isComplete ? '今日已自动打卡' : `还差 ${Math.max(0, dayTargetPercent - (currentDay?.percent ?? 0))}% 达标` }}
           </span>
         </div>
         <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -330,6 +428,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
       </div>
       <TaskTimeline
         :plan="plan"
+        :planning-mode="planningMode"
         :selected-task-id="planStore.selectedTask?.id ?? null"
         :busy-task-id="busyTaskId"
         @select="selectTask"

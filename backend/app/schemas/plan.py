@@ -11,6 +11,7 @@ class PlanGenerateRequest(BaseModel):
     title: str | None = None
     subject_area: str = "general"
     goal_mode: str = "overview"
+    planning_mode: str = Field(default="adaptive", pattern="^(j_mode|p_mode|adaptive|roadmap|flow|hybrid)$")
     selected_methods: list[str] = Field(default_factory=lambda: ["mixed"])
     selected_experiences: list[str] | None = None
     duration_days: int = Field(default=14, ge=1, le=180)
@@ -27,6 +28,7 @@ class LearningPlanRead(BaseModel):
     title: str
     goal_summary: str
     goal_mode: str
+    planning_mode: str = "adaptive"
     method_policy: str
     method_mix: dict[str, float]
     experience_policy: str = "mixed"

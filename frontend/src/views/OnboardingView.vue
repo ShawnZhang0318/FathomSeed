@@ -3,17 +3,19 @@ import { Loader2, Sparkles } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import ChatBox from '../components/ChatBox.vue'
 import MethodSelector from '../components/MethodSelector.vue'
+import PlanningModeSelector from '../components/PlanningModeSelector.vue'
 import StrategyCards from '../components/StrategyCards.vue'
 import { api } from '../services/api'
 import { methodStore } from '../stores/methodStore'
 import { planStore } from '../stores/planStore'
-import type { IntentResponse, StrategyCard } from '../types'
+import type { IntentResponse, PlanningMode, StrategyCard } from '../types'
 
 const loading = ref(false)
 const generating = ref(false)
 const intent = ref<IntentResponse | null>(null)
 const strategies = ref<StrategyCard[]>([])
 const selectedMode = ref('overview')
+const selectedPlanningMode = ref<PlanningMode>('adaptive')
 const durationDays = ref(14)
 const dailyMinutes = ref(45)
 const error = ref('')
@@ -57,6 +59,7 @@ async function generatePlan() {
       title: intent.value.subject_area === 'general' ? intent.value.goal_summary : `学习${intent.value.subject_area}`,
       subject_area: intent.value.subject_area,
       goal_mode: selectedMode.value,
+      planning_mode: selectedPlanningMode.value,
       selected_methods: methodStore.selected,
       selected_experiences: methodStore.selected,
       duration_days: durationDays.value,
@@ -96,6 +99,12 @@ async function generatePlan() {
       :strategies="strategies"
       :selected="selectedMode"
       @select="(mode) => (selectedMode = mode)"
+    />
+
+    <PlanningModeSelector
+      v-if="intent"
+      :selected="selectedPlanningMode"
+      @select="(mode) => (selectedPlanningMode = mode)"
     />
 
     <MethodSelector

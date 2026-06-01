@@ -5,6 +5,7 @@ import type { LearningPlan, PlanTask } from '../types'
 
 defineProps<{
   plan: LearningPlan
+  planningMode: string
   selectedTaskId: string | null
   busyTaskId: string | null
 }>()
@@ -46,6 +47,12 @@ function entryLabel(task: PlanTask): string {
   return labels[task.experience_mode || task.method_code] ?? '进入学习'
 }
 
+function unitLabel(task: PlanTask, planningMode: string): string {
+  if (planningMode === 'p_mode') return '自由入口'
+  if (planningMode === 'adaptive') return `Day ${task.day_number} · 可选入口`
+  return `Day ${task.day_number}`
+}
+
 function taskProgress(task: PlanTask): number {
   return Math.max(0, Math.min(100, task.progress_percent ?? (task.status === 'completed' ? 100 : 0)))
 }
@@ -64,7 +71,7 @@ function taskProgress(task: PlanTask): number {
           <Check v-if="task.status === 'completed'" :size="18" class="text-emerald-500" aria-hidden="true" />
           <Play v-else-if="task.status === 'in_progress'" :size="18" class="text-saffron" aria-hidden="true" />
           <Circle v-else :size="18" class="text-slate-400" aria-hidden="true" />
-          <span class="text-sm font-semibold soft-text">Day {{ task.day_number }}</span>
+          <span class="text-sm font-semibold soft-text">{{ unitLabel(task, planningMode) }}</span>
           <span class="signal-chip">
             {{ experienceLabel(task.experience_mode || task.method_code) }}
           </span>
