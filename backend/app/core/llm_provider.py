@@ -71,7 +71,7 @@ class LLMProvider:
             ChatMessage(
                 role="system",
                 content=(
-                    "You generate learning exercises for FullMind. "
+                    "You generate learning exercises for FathomSeed. "
                     "Return strict JSON only. The JSON object must have an `exercises` array. "
                     "Each item must include: type, prompt, expected_output, hints."
                 ),

@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'FullMind',
-        short_name: 'FullMind',
+        name: 'FathomSeed',
+        short_name: 'FathomSeed',
         theme_color: '#f7f3ed',
         background_color: '#f7f3ed',
         display: 'standalone',
@@ -25,4 +25,3 @@ export default defineConfig({
     port: 5173
   }
 })
-

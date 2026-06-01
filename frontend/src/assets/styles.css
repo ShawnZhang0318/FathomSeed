@@ -405,6 +405,64 @@ select {
   color: var(--accent-2);
 }
 
+.rhythm-choice {
+  display: flex;
+  min-height: 86px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, var(--accent-soft), transparent 9rem),
+    var(--surface-soft);
+  color: var(--text);
+  padding: 14px;
+  text-align: left;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.rhythm-choice:hover,
+.rhythm-choice.is-active {
+  border-color: color-mix(in srgb, var(--accent-2) 70%, var(--line));
+  background: var(--surface-strong);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.rhythm-choice-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-strong);
+  color: var(--accent-2);
+}
+
+.rhythm-choice strong,
+.rhythm-choice small {
+  display: block;
+}
+
+.rhythm-choice strong {
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.rhythm-choice small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
 .muted-text {
   color: var(--muted);
 }

@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { ArrowUpRight, Clock3, Compass, Timer } from 'lucide-vue-next'
+import { ArrowUpRight, CalendarCheck2, Clock3, Compass, Sparkles, Timer } from 'lucide-vue-next'
 import { reactive } from 'vue'
+import type { Component } from 'vue'
+import type { PlanningMode } from '../types'
 
 const emit = defineEmits<{
   clarify: [payload: { text: string; durationDays: number; dailyMinutes: number }]
+  selectPlanningMode: [mode: PlanningMode]
 }>()
 
 defineProps<{
   loading: boolean
+  planningMode: PlanningMode
 }>()
 
 const form = reactive({
@@ -15,6 +19,36 @@ const form = reactive({
   durationDays: 14,
   dailyMinutes: 45
 })
+
+const rhythmModes: Array<{
+  code: PlanningMode
+  title: string
+  badge: string
+  description: string
+  icon: Component
+}> = [
+  {
+    code: 'j_mode',
+    title: 'J人模式',
+    badge: '安排清楚',
+    description: '按天路线、每日任务、完成后自动打卡。',
+    icon: CalendarCheck2
+  },
+  {
+    code: 'p_mode',
+    title: 'P人模式',
+    badge: '自由进入',
+    description: '生成任务池，按今天状态选择学习入口。',
+    icon: Compass
+  },
+  {
+    code: 'adaptive',
+    title: '自适应模式',
+    badge: '主线 + 选择',
+    description: '系统把控阶段目标，你选择今天怎么学。',
+    icon: Sparkles
+  }
+]
 
 function submit() {
   if (!form.text.trim()) return
@@ -54,6 +88,31 @@ function submit() {
           />
         </div>
 
+        <div class="border-t px-5 py-5 md:px-7" style="border-color: var(--line)">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <span class="text-sm font-black soft-text">学习节奏</span>
+            <span class="text-xs font-bold muted-text">先选节奏，再生成学习系统</span>
+          </div>
+          <div class="grid gap-3 md:grid-cols-3">
+            <button
+              v-for="mode in rhythmModes"
+              :key="mode.code"
+              type="button"
+              class="rhythm-choice"
+              :class="{ 'is-active': planningMode === mode.code }"
+              @click="emit('selectPlanningMode', mode.code)"
+            >
+              <span class="rhythm-choice-icon">
+                <component :is="mode.icon" :size="18" aria-hidden="true" />
+              </span>
+              <span class="min-w-0">
+                <strong>{{ mode.title }}</strong>
+                <small>{{ mode.badge }} · {{ mode.description }}</small>
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div class="mt-5 grid gap-4 border-t px-5 py-5 md:grid-cols-[1fr_1fr_auto] md:px-7" style="border-color: var(--line); background: var(--surface-soft)">
           <label class="grid gap-2 text-sm font-bold">
             <span class="soft-text">周期</span>
@@ -87,7 +146,7 @@ function submit() {
 
           <div class="grid items-end">
             <button class="primary-button w-full md:min-w-40" :disabled="loading" @click="submit">
-              生成学习方案
+              继续
               <ArrowUpRight :size="18" aria-hidden="true" />
             </button>
           </div>

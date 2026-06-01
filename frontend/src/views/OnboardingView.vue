@@ -3,7 +3,6 @@ import { Loader2, Sparkles } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import ChatBox from '../components/ChatBox.vue'
 import MethodSelector from '../components/MethodSelector.vue'
-import PlanningModeSelector from '../components/PlanningModeSelector.vue'
 import StrategyCards from '../components/StrategyCards.vue'
 import { api } from '../services/api'
 import { methodStore } from '../stores/methodStore'
@@ -76,7 +75,12 @@ async function generatePlan() {
 
 <template>
   <div>
-    <ChatBox :loading="loading" @clarify="clarify" />
+    <ChatBox
+      :loading="loading"
+      :planning-mode="selectedPlanningMode"
+      @clarify="clarify"
+      @select-planning-mode="(mode) => (selectedPlanningMode = mode)"
+    />
 
     <section v-if="intent" class="mx-auto max-w-6xl px-4 py-4">
       <div class="quiet-card p-5">
@@ -99,12 +103,6 @@ async function generatePlan() {
       :strategies="strategies"
       :selected="selectedMode"
       @select="(mode) => (selectedMode = mode)"
-    />
-
-    <PlanningModeSelector
-      v-if="intent"
-      :selected="selectedPlanningMode"
-      @select="(mode) => (selectedPlanningMode = mode)"
     />
 
     <MethodSelector

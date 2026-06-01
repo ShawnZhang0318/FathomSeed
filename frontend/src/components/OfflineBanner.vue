@@ -21,7 +21,11 @@ watch(online, (value) => {
 </script>
 
 <template>
-  <div class="border-b backdrop-blur" style="border-color: var(--line); background: color-mix(in srgb, var(--surface) 64%, transparent)">
+  <div
+    v-if="!online || offlineQueueStore.queuedCount > 0"
+    class="border-b backdrop-blur"
+    style="border-color: var(--line); background: color-mix(in srgb, var(--surface) 64%, transparent)"
+  >
     <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
       <span class="flex items-center gap-2 muted-text">
         <Wifi v-if="online" :size="16" class="text-emerald-500" aria-hidden="true" />
