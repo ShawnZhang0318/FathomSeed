@@ -241,8 +241,6 @@ function submit() {
           先生成选项，再确认生成大厅。
         </p>
       </aside>
-        </div>
-      </aside>
     </div>
   </section>
 </template>
