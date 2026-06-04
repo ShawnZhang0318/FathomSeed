@@ -25,8 +25,9 @@ const heroCopy = computed(() =>
         title: '选择今日开局',
         description:
           '先把目标和节奏配置好，系统会生成成果方向、入口偏好和最终 Challenge Lobby。真正进入学习活动会在大厅生成后出现。',
-        previewEyebrow: 'Preview',
-        previewTitle: '挑战大厅会这样生成',
+        previewEyebrow: 'Challenge Preview',
+        previewTitle: '挑战预览',
+        emptyDescription: '完成左侧配置后，系统会先生成可选开局；确认后才会生成今日挑战、任务池和 Activity Room。',
         rhythmHint: '第 1 步：先生成可选开局',
         submitLabel: '生成开局选项',
         placeholder: '例如：我想学离散数学，用来准备计算机考研'
@@ -37,7 +38,8 @@ const heroCopy = computed(() =>
         description:
           '先把目标、节奏和每日时间说清楚。系统会生成成果方向、入口偏好和清晰学习大厅，让你知道今天从哪里开始。',
         previewEyebrow: 'Plan Preview',
-        previewTitle: '学习大厅会这样生成',
+        previewTitle: '今日计划预览',
+        emptyDescription: '完成左侧配置后，系统会先生成学习选项；确认后才会生成今日主线、路线和 Activity Room。',
         rhythmHint: '第 1 步：先生成学习选项',
         submitLabel: '生成学习选项',
         placeholder: '例如：我想学习 Python，两周后能独立做一个小项目'
@@ -46,14 +48,14 @@ const heroCopy = computed(() =>
 const previewRows = computed(() =>
   isDark.value
     ? [
-        ['今日主线', '函数与参数'],
-        ['推荐入口', '刷题 -> 项目'],
-        ['奖励预告', '函数徽章碎片']
+        ['今日挑战', '待生成'],
+        ['推荐入口', '待生成'],
+        ['奖励预告', '待生成']
       ]
     : [
-        ['今日重点', '函数与参数'],
-        ['学习入口', '刷题 · 播客 · 项目'],
-        ['成果沉淀', '轻徽章 · 复盘卡']
+        ['今日主线', '待生成'],
+        ['可选入口', '待生成'],
+        ['成果沉淀', '待生成']
       ]
 )
 const previewStages = computed(() =>
@@ -212,6 +214,13 @@ function submit() {
         <div>
           <p class="text-xs font-black uppercase soft-text">{{ heroCopy.previewEyebrow }}</p>
           <h2 class="mt-3 text-2xl font-black">{{ heroCopy.previewTitle }}</h2>
+          <div class="empty-plan-card mt-5">
+            <span class="empty-plan-icon">
+              <Sparkles :size="22" aria-hidden="true" />
+            </span>
+            <strong>当前暂无学习计划，快去生成吧~</strong>
+            <p>{{ heroCopy.emptyDescription }}</p>
+          </div>
           <div class="mt-5 grid gap-3">
             <div v-for="row in previewRows" :key="row[0]" class="metric-row">
               <span>{{ row[0] }}</span>
@@ -221,11 +230,7 @@ function submit() {
         </div>
 
         <div class="preview-route-card">
-          <div class="preview-route-line" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
+          <p class="text-xs font-black uppercase soft-text">生成顺序</p>
           <div class="preview-stage-list">
             <div v-for="stage in previewStages" :key="stage[0]" class="preview-stage-row">
               <strong>{{ stage[0] }}</strong>
