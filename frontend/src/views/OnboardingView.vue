@@ -25,10 +25,10 @@ const durationDays = ref(14)
 const dailyMinutes = ref(45)
 const error = ref('')
 const finalCtaLabel = computed(() =>
-  props.theme === 'dark' ? '进入 Challenge Lobby' : '生成学习计划'
+  props.theme === 'dark' ? '生成并进入 Challenge Lobby' : '生成并进入学习大厅'
 )
 const availabilityLabel = computed(() =>
-  props.theme === 'dark' ? '本地可用 · 进入挑战大厅后体验增强' : '本地可用 · 生成后进入学习大厅'
+  props.theme === 'dark' ? '第 2 步已就绪 · 确认后生成挑战大厅' : '第 2 步已就绪 · 确认后生成学习大厅'
 )
 
 onMounted(async () => {
@@ -118,16 +118,19 @@ async function generatePlan() {
     />
 
     <MethodSelector
-      v-if="methodStore.methods.length"
+      v-if="intent && methodStore.methods.length"
       :methods="methodStore.methods"
       :selected="methodStore.selected"
       @toggle="(code) => methodStore.toggle(code)"
     />
 
-    <section class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6">
+    <section
+      v-if="intent || error"
+      class="build-action-panel mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6"
+    >
       <p v-if="error" class="text-sm font-medium text-coral">{{ error }}</p>
       <span v-else class="signal-chip">{{ availabilityLabel }}</span>
-      <button class="primary-button" :disabled="!intent || generating" @click="generatePlan">
+      <button v-if="intent" class="primary-button" :disabled="generating" @click="generatePlan">
         <Loader2 v-if="generating" :size="16" class="animate-spin" aria-hidden="true" />
         {{ finalCtaLabel }}
       </button>

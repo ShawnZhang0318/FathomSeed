@@ -24,22 +24,22 @@ const heroCopy = computed(() =>
         chip: '今日开局配置',
         title: '选择今日开局',
         description:
-          '把一个学习目标配置成 Challenge Lobby、路线地图和多模式 Activity Room。你可以先选节奏，再让系统生成今天最适合进入的学习方式。',
+          '先把目标和节奏配置好，系统会生成成果方向、入口偏好和最终 Challenge Lobby。真正进入学习活动会在大厅生成后出现。',
         previewEyebrow: 'Preview',
         previewTitle: '挑战大厅会这样生成',
-        rhythmHint: '先选节奏，再生成挑战大厅',
-        submitLabel: '生成挑战大厅',
+        rhythmHint: '第 1 步：先生成可选开局',
+        submitLabel: '生成开局选项',
         placeholder: '例如：我想学离散数学，用来准备计算机考研'
       }
     : {
         chip: '学习入口',
         title: '今天想抵达哪里？',
         description:
-          '先把目标、节奏和每日时间说清楚。系统会生成清晰的学习大厅、规划路线和 Activity Room，让你知道今天从哪里开始。',
+          '先把目标、节奏和每日时间说清楚。系统会生成成果方向、入口偏好和清晰学习大厅，让你知道今天从哪里开始。',
         previewEyebrow: 'Plan Preview',
         previewTitle: '学习大厅会这样生成',
-        rhythmHint: '先选节奏，再生成学习计划',
-        submitLabel: '生成学习计划',
+        rhythmHint: '第 1 步：先生成学习选项',
+        submitLabel: '生成学习选项',
         placeholder: '例如：我想学习 Python，两周后能独立做一个小项目'
       }
 )
@@ -54,6 +54,19 @@ const previewRows = computed(() =>
         ['今日重点', '函数与参数'],
         ['学习入口', '刷题 · 播客 · 项目'],
         ['成果沉淀', '轻徽章 · 复盘卡']
+      ]
+)
+const previewStages = computed(() =>
+  isDark.value
+    ? [
+        ['01', '开局选项', '成果方向 + 入口偏好'],
+        ['02', 'Challenge Lobby', '今日主线、任务池、奖励预告'],
+        ['03', 'Activity Room', '刷题 / 游戏 / 播客 / 项目']
+      ]
+    : [
+        ['01', '学习选项', '成果方向 + 入口偏好'],
+        ['02', '学习大厅', '今日重点、路线、任务入口'],
+        ['03', 'Activity Room', '练习 / 播客 / 项目 / 闪卡']
       ]
 )
 
@@ -105,7 +118,7 @@ function submit() {
 
 <template>
   <section :class="['hero-shell', isDark ? 'hero-shell-hud' : 'hero-shell-clean']">
-    <div class="hybrid-hero-grid mx-auto grid gap-8 px-4 py-8 lg:items-start">
+    <div class="hybrid-hero-grid mx-auto grid gap-8 px-4 py-8 lg:items-stretch">
       <div class="min-w-0">
         <span class="signal-chip w-fit">
           <Compass :size="14" aria-hidden="true" />
@@ -196,13 +209,38 @@ function submit() {
       </div>
 
       <aside :class="['start-preview-panel', isDark ? 'start-preview-panel-hud' : 'start-preview-panel-clean']">
-        <p class="text-xs font-black uppercase soft-text">{{ heroCopy.previewEyebrow }}</p>
-        <h2 class="mt-3 text-2xl font-black">{{ heroCopy.previewTitle }}</h2>
-        <div class="mt-5 grid gap-3">
-          <div v-for="row in previewRows" :key="row[0]" class="metric-row">
-            <span>{{ row[0] }}</span>
-            <strong>{{ row[1] }}</strong>
+        <div>
+          <p class="text-xs font-black uppercase soft-text">{{ heroCopy.previewEyebrow }}</p>
+          <h2 class="mt-3 text-2xl font-black">{{ heroCopy.previewTitle }}</h2>
+          <div class="mt-5 grid gap-3">
+            <div v-for="row in previewRows" :key="row[0]" class="metric-row">
+              <span>{{ row[0] }}</span>
+              <strong>{{ row[1] }}</strong>
+            </div>
           </div>
+        </div>
+
+        <div class="preview-route-card">
+          <div class="preview-route-line" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="preview-stage-list">
+            <div v-for="stage in previewStages" :key="stage[0]" class="preview-stage-row">
+              <strong>{{ stage[0] }}</strong>
+              <span>
+                <b>{{ stage[1] }}</b>
+                <small>{{ stage[2] }}</small>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p class="preview-footnote">
+          先生成选项，再确认生成大厅。
+        </p>
+      </aside>
         </div>
       </aside>
     </div>

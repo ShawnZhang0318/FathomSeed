@@ -1903,18 +1903,23 @@ select {
 }
 
 .start-preview-panel {
-  align-self: start;
+  align-self: stretch;
+  display: flex;
+  min-height: 560px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
   padding: 24px;
   background: var(--surface-strong);
   box-shadow: var(--shadow);
 }
 
 .start-preview-panel-clean {
-  margin-top: 34px;
+  margin-top: 0;
 }
 
 .start-preview-panel-hud {
-  margin-top: 22px;
+  margin-top: 0;
   background: #1b2026;
   box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.05), 0 20px 44px rgba(0, 0, 0, 0.3);
 }
@@ -1930,6 +1935,91 @@ select {
 
 .theme-dark .metric-row {
   background: #151a20;
+}
+
+.preview-route-card {
+  display: grid;
+  gap: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 18px;
+}
+
+.preview-route-line {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.preview-route-line span {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, var(--line));
+}
+
+.preview-route-line span:first-child {
+  background: var(--accent);
+}
+
+.preview-stage-list {
+  display: grid;
+  gap: 12px;
+}
+
+.preview-stage-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.preview-stage-row > strong {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.preview-stage-row b,
+.preview-stage-row small {
+  display: block;
+}
+
+.preview-stage-row b {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.preview-stage-row small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.preview-footnote {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.6;
+}
+
+.build-action-panel {
+  border-top: 1px solid var(--line);
 }
 
 .rhythm-choice {
@@ -2065,6 +2155,7 @@ select {
 @media (min-width: 1024px) {
   .hybrid-hero-grid {
     grid-template-columns: minmax(0, 1fr) 420px;
+    align-items: stretch;
     padding-top: 60px;
     padding-bottom: 56px;
   }
@@ -2098,5 +2189,9 @@ select {
   .start-preview-panel-clean,
   .start-preview-panel-hud {
     margin-top: 0;
+  }
+
+  .start-preview-panel {
+    min-height: auto;
   }
 }

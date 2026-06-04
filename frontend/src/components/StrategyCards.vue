@@ -25,7 +25,7 @@ const icons: Record<string, Component> = {
   <section class="mx-auto max-w-6xl px-4 py-10">
     <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <span class="signal-chip">成果方向</span>
+        <span class="signal-chip">第 2 步 · 成果方向</span>
         <h2 class="mt-3 text-2xl font-black tracking-normal md:text-3xl">选择这次学习要交付什么</h2>
         <p class="mt-2 max-w-2xl text-sm leading-7 muted-text">
           你不是只在学一个知识点，而是在决定这段时间要抵达的状态：考试、项目、求职、研究或快速入门。
