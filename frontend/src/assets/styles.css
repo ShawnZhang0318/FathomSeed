@@ -1724,3 +1724,379 @@ select {
     padding: 0 9px;
   }
 }
+
+/* Final theme split: Light = Concept C, Dark = Concept B */
+.theme-light {
+  --app-bg: #ffffff;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-strong: #ffffff;
+  --surface-soft: #f7f9fc;
+  --field: #ffffff;
+  --text: #101828;
+  --muted: #536176;
+  --soft: #7a8799;
+  --line: #dbe3ee;
+  --line-strong: #c7d2df;
+  --accent: #101828;
+  --accent-2: #1fb679;
+  --accent-soft: rgba(31, 182, 121, 0.1);
+  --glow: rgba(16, 24, 40, 0.12);
+  --shadow: 0 16px 38px rgba(16, 24, 40, 0.08);
+  --gold: #d99a24;
+  --cyan: #0891b2;
+  --xp: #1fb679;
+}
+
+.theme-dark {
+  --app-bg: #111418;
+  --surface: rgba(27, 32, 38, 0.92);
+  --surface-strong: #1b2026;
+  --surface-soft: #151a20;
+  --field: #111418;
+  --text: #f8fafc;
+  --muted: #a8b2c0;
+  --soft: #808b99;
+  --line: #303a45;
+  --line-strong: #46515f;
+  --accent: #a3e635;
+  --accent-2: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
+  --glow: rgba(163, 230, 53, 0.22);
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.3);
+  --gold: #f59e0b;
+  --cyan: #22d3ee;
+  --xp: #a3e635;
+}
+
+.theme-light .space-layer,
+.theme-dark .space-layer {
+  opacity: 0;
+}
+
+.app-shell {
+  background: var(--app-bg);
+}
+
+.app-header {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.brand-mark {
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--app-bg);
+  box-shadow: 0 12px 24px rgba(16, 24, 40, 0.12);
+}
+
+.theme-dark .brand-mark {
+  background: var(--xp);
+  color: #111418;
+  box-shadow: 0 0 24px rgba(163, 230, 53, 0.2);
+}
+
+.app-nav {
+  background: var(--surface-strong);
+}
+
+.theme-dark .app-nav {
+  background: #151a20;
+}
+
+.theme-switch {
+  background: var(--surface-strong);
+  box-shadow: none;
+}
+
+.theme-dark .theme-switch {
+  background: #151a20;
+}
+
+.primary-button {
+  min-height: 48px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--app-bg);
+  box-shadow: 0 14px 26px var(--glow);
+}
+
+.theme-dark .primary-button {
+  color: #111418;
+}
+
+.text-button,
+.signal-chip,
+.field-shell {
+  background: var(--surface-strong);
+}
+
+.hero-shell {
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-shell-clean {
+  background: #ffffff;
+}
+
+.hero-shell-hud {
+  background:
+    linear-gradient(180deg, #151a20 0%, #111418 72%);
+}
+
+.hybrid-hero-grid {
+  max-width: 1280px;
+}
+
+.hero-title {
+  max-width: 760px;
+  color: var(--text);
+  font-size: 44px;
+  font-weight: 950;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.hero-description {
+  max-width: 690px;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.85;
+}
+
+.theme-light .hero-title {
+  font-size: 46px;
+}
+
+.theme-dark .hero-title {
+  color: #f8fafc;
+  font-size: 54px;
+}
+
+.goal-input-panel,
+.start-preview-panel,
+.focus-summary-panel,
+.challenge-lobby,
+.lobby-card,
+.route-map-panel,
+.honor-room-panel,
+.activity-topbar,
+.pool-entry-card,
+.mission-card,
+.studio-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.goal-input-panel {
+  overflow: hidden;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.theme-light .goal-input-panel {
+  box-shadow: 0 18px 44px rgba(16, 24, 40, 0.08);
+}
+
+.theme-dark .goal-input-panel {
+  background: #1b2026;
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.04), 0 22px 48px rgba(0, 0, 0, 0.28);
+}
+
+.start-preview-panel {
+  align-self: start;
+  padding: 24px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.start-preview-panel-clean {
+  margin-top: 34px;
+}
+
+.start-preview-panel-hud {
+  margin-top: 22px;
+  background: #1b2026;
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.05), 0 20px 44px rgba(0, 0, 0, 0.3);
+}
+
+.metric-row {
+  min-height: 58px;
+  border-radius: 8px;
+}
+
+.theme-light .metric-row {
+  background: #f8fafc;
+}
+
+.theme-dark .metric-row {
+  background: #151a20;
+}
+
+.rhythm-choice {
+  min-height: 82px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.theme-light .rhythm-choice.is-active {
+  border-color: #39c994;
+  box-shadow: 0 0 0 4px rgba(31, 182, 121, 0.14);
+}
+
+.theme-dark .rhythm-choice.is-active {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.16);
+}
+
+.challenge-lobby-clean {
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(16, 24, 40, 0.08);
+}
+
+.challenge-lobby-hud {
+  background:
+    linear-gradient(135deg, #1b2026 0%, #151a20 100%);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.08), 0 22px 50px rgba(0, 0, 0, 0.3);
+}
+
+.lobby-card {
+  background: var(--surface-strong);
+}
+
+.theme-dark .lobby-card {
+  background: #151a20;
+}
+
+.route-map-panel {
+  background: var(--surface-strong);
+}
+
+.theme-light .route-map-panel {
+  box-shadow: 0 16px 36px rgba(16, 24, 40, 0.07);
+}
+
+.theme-dark .route-map-panel {
+  background: #1b2026;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25);
+}
+
+.route-node-card {
+  min-height: 132px;
+}
+
+.theme-light .route-node-card {
+  background: #f8fafc;
+}
+
+.theme-dark .route-node-card {
+  background: #151a20;
+}
+
+.route-node-orb {
+  background: var(--accent);
+}
+
+.theme-light .route-node-orb {
+  color: #ffffff;
+}
+
+.theme-dark .route-node-orb {
+  color: #111418;
+}
+
+.pool-entry-card,
+.mission-card,
+.honor-card {
+  background: var(--surface-strong);
+}
+
+.theme-dark .pool-entry-card,
+.theme-dark .mission-card,
+.theme-dark .honor-card {
+  background: #1b2026;
+}
+
+.honor-room-panel {
+  background: var(--surface-strong);
+}
+
+.theme-dark .honor-room-panel {
+  background: #1b2026;
+}
+
+.studio-panel {
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.theme-dark .studio-panel {
+  background: #1b2026;
+}
+
+.theme-light .studio-hero {
+  background:
+    linear-gradient(135deg, #101828, #263447);
+}
+
+.theme-dark .studio-hero {
+  background:
+    linear-gradient(135deg, #151a20 0%, #1b2026 58%, #0e7490 100%);
+}
+
+.progress-track span,
+.podcast-bar span {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 60px;
+  }
+
+  .theme-light .hero-title {
+    font-size: 62px;
+  }
+
+  .theme-dark .hero-title {
+    font-size: 72px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hybrid-hero-grid {
+    grid-template-columns: minmax(0, 1fr) 420px;
+    padding-top: 60px;
+    padding-bottom: 56px;
+  }
+
+  .theme-dark .hybrid-hero-grid {
+    grid-template-columns: minmax(0, 760px) 432px;
+  }
+
+  .challenge-lobby {
+    grid-template-columns: minmax(0, 1fr) 390px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hybrid-hero-grid {
+    padding-top: 32px;
+    padding-bottom: 36px;
+  }
+
+  .hero-title,
+  .theme-light .hero-title,
+  .theme-dark .hero-title {
+    font-size: 42px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .start-preview-panel-clean,
+  .start-preview-panel-hud {
+    margin-top: 0;
+  }
+}

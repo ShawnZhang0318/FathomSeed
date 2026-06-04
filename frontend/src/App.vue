@@ -10,6 +10,7 @@ type ThemeMode = 'light' | 'dark'
 
 const theme = ref<ThemeMode>('light')
 const themeClass = computed(() => (theme.value === 'dark' ? 'theme-dark' : 'theme-light'))
+const lobbyNavLabel = computed(() => (theme.value === 'dark' ? '今日开局' : '学习大厅'))
 
 function setTheme(nextTheme: ThemeMode) {
   theme.value = nextTheme
@@ -37,7 +38,7 @@ watchEffect(() => {
     <div class="space-layer" aria-hidden="true"></div>
     <div class="app-content">
       <header class="app-header sticky top-0 z-20">
-        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4">
           <div class="flex items-center gap-3">
             <span class="brand-mark">
               <BookOpenCheck :size="22" aria-hidden="true" />
@@ -49,7 +50,7 @@ watchEffect(() => {
           </div>
 
           <nav v-if="planStore.plan" class="app-nav" aria-label="学习导航">
-            <a href="#learning-lobby">今日开局</a>
+            <a href="#learning-lobby">{{ lobbyNavLabel }}</a>
             <a href="#route-map">路线</a>
             <a href="#honor-room">
               <Trophy :size="14" aria-hidden="true" />
@@ -79,8 +80,8 @@ watchEffect(() => {
       </header>
 
       <OfflineBanner />
-      <OnboardingView v-if="!planStore.plan" />
-      <PlanView v-else />
+      <OnboardingView v-if="!planStore.plan" :theme="theme" />
+      <PlanView v-else :theme="theme" />
     </div>
   </div>
 </template>

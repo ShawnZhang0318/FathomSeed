@@ -18,6 +18,12 @@ import { offlineQueueStore } from '../stores/offlineQueueStore'
 import { planStore } from '../stores/planStore'
 import type { ExerciseResponse, FeedbackEvent, PlanTask } from '../types'
 
+type ThemeMode = 'light' | 'dark'
+
+const props = defineProps<{
+  theme: ThemeMode
+}>()
+
 const exercises = ref<ExerciseResponse | null>(null)
 const loadingExercises = ref(false)
 const busyTaskId = ref<string | null>(null)
@@ -33,6 +39,7 @@ const pivotFeedbackTypes = new Set([
 
 const plan = computed(() => planStore.plan)
 const planningMode = computed(() => plan.value?.planning_mode ?? 'adaptive')
+const isDark = computed(() => props.theme === 'dark')
 
 const modeMeta = computed(() => {
   if (planningMode.value === 'j_mode') {
@@ -64,6 +71,21 @@ const modeMeta = computed(() => {
     progressHint: '达到 70% 即视为今日达标'
   }
 })
+
+const lobbyTitle = computed(() => (isDark.value ? 'Challenge Lobby' : '学习大厅'))
+const lobbyEyebrow = computed(() => (isDark.value ? modeMeta.value.eyebrow : 'Today Plan'))
+const startCardEyebrow = computed(() => (isDark.value ? 'Start Mission' : '今日入口'))
+const todayEntrancesEyebrow = computed(() => (isDark.value ? 'Today Entrances' : 'Activity Room'))
+const todayEntrancesTitle = computed(() =>
+  isDark.value ? '今天从哪里开局？' : '今天先从哪里开始？'
+)
+const routeDescription = computed(() =>
+  isDark.value
+    ? '沿用 A 方案的征服路线：节点、进度、当前主线一眼能看出下一步。'
+    : '沿用 A 方案的规划路线，但放进 C 的清晰学习大厅，不变成后台列表。'
+)
+const missionPoolEyebrow = computed(() => (isDark.value ? 'Mission Pool' : 'All Entrances'))
+const missionPoolTitle = computed(() => (isDark.value ? '全部挑战入口' : '全部学习入口'))
 
 const dayTargetPercent = computed(() => (planningMode.value === 'adaptive' ? 70 : 100))
 const totalMinutes = computed(() =>
@@ -115,7 +137,10 @@ const recommendedTasks = computed(() => {
   return (dayTasks.length ? dayTasks : openTasks).slice(0, 4)
 })
 const headlineTask = computed(() => recommendedTasks.value[0] ?? plan.value?.tasks[0] ?? null)
-const returnLabel = computed(() => (planningMode.value === 'p_mode' ? '返回任务池' : '返回 Challenge Lobby'))
+const returnLabel = computed(() => {
+  if (planningMode.value === 'p_mode') return '返回任务池'
+  return isDark.value ? '返回 Challenge Lobby' : '返回学习大厅'
+})
 const activeActivityProgress = computed(() =>
   activeActivityTask.value ? taskProgress(activeActivityTask.value) : 0
 )
@@ -356,14 +381,18 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
     />
   </main>
 
-  <main v-else-if="plan" class="mx-auto max-w-6xl px-4 py-8">
-    <section id="learning-lobby" class="challenge-lobby">
+  <main v-else-if="plan" class="mx-auto max-w-7xl px-4 py-8">
+    <section
+      id="learning-lobby"
+      class="challenge-lobby"
+      :class="isDark ? 'challenge-lobby-hud' : 'challenge-lobby-clean'"
+    >
       <div class="lobby-copy">
         <p class="mb-3 flex items-center gap-2 text-sm font-extrabold soft-text">
           <component :is="modeMeta.icon" :size="16" aria-hidden="true" />
-          {{ modeMeta.eyebrow }} · {{ modeMeta.title }}
+          {{ lobbyEyebrow }} · {{ modeMeta.title }}
         </p>
-        <h1 class="text-3xl font-black tracking-normal md:text-5xl">Challenge Lobby</h1>
+        <h1 class="text-3xl font-black tracking-normal md:text-5xl">{{ lobbyTitle }}</h1>
         <p class="mt-4 max-w-2xl text-sm leading-7 muted-text">{{ modeMeta.description }}</p>
         <div class="mt-5 flex flex-wrap gap-2">
           <span class="signal-chip">V{{ plan.version }}</span>
@@ -372,7 +401,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
         </div>
       </div>
       <div class="lobby-card">
-        <p class="text-xs font-black uppercase soft-text">Start Mission</p>
+        <p class="text-xs font-black uppercase soft-text">{{ startCardEyebrow }}</p>
         <h2 class="mt-3 text-2xl font-black">{{ headlineTask?.title ?? plan.title }}</h2>
         <p class="mt-3 line-clamp-3 text-sm leading-7 muted-text">
           {{ headlineTask?.description ?? plan.goal_summary }}
@@ -407,8 +436,8 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
     <section v-if="recommendedTasks.length" class="mt-6">
       <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p class="text-xs font-black uppercase soft-text">Today Entrances</p>
-          <h2 class="mt-2 text-2xl font-black tracking-normal">今天从哪里开始？</h2>
+          <p class="text-xs font-black uppercase soft-text">{{ todayEntrancesEyebrow }}</p>
+          <h2 class="mt-2 text-2xl font-black tracking-normal">{{ todayEntrancesTitle }}</h2>
           <p class="mt-2 text-sm leading-7 muted-text">{{ modeMeta.progressHint }}</p>
         </div>
         <button class="text-button" @click="resetPlan">
@@ -437,7 +466,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
         <div>
           <p class="text-xs font-black uppercase soft-text">Route Map</p>
           <h2 class="mt-2 text-2xl font-black tracking-normal">规划路线</h2>
-          <p class="mt-2 text-sm leading-7 muted-text">保留地图征服感，但用清晰学习大厅承载，不变成后台列表。</p>
+          <p class="mt-2 text-sm leading-7 muted-text">{{ routeDescription }}</p>
         </div>
         <span class="signal-chip">
           {{ planningMode === 'p_mode' ? `任务池 ${poolProgress}%` : `Day ${currentDay?.dayNumber ?? 1} · ${currentDay?.percent ?? 0}%` }}
@@ -464,8 +493,8 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
 
     <section class="mt-8">
       <div class="mb-4">
-        <p class="text-xs font-black uppercase soft-text">Mission Pool</p>
-        <h2 class="mt-2 text-2xl font-black tracking-normal">全部学习入口</h2>
+        <p class="text-xs font-black uppercase soft-text">{{ missionPoolEyebrow }}</p>
+        <h2 class="mt-2 text-2xl font-black tracking-normal">{{ missionPoolTitle }}</h2>
       </div>
       <TaskTimeline
         :plan="plan"

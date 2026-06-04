@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Loader2, Sparkles } from 'lucide-vue-next'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ChatBox from '../components/ChatBox.vue'
 import MethodSelector from '../components/MethodSelector.vue'
 import StrategyCards from '../components/StrategyCards.vue'
@@ -8,6 +8,12 @@ import { api } from '../services/api'
 import { methodStore } from '../stores/methodStore'
 import { planStore } from '../stores/planStore'
 import type { IntentResponse, PlanningMode, StrategyCard } from '../types'
+
+type ThemeMode = 'light' | 'dark'
+
+const props = defineProps<{
+  theme: ThemeMode
+}>()
 
 const loading = ref(false)
 const generating = ref(false)
@@ -18,6 +24,12 @@ const selectedPlanningMode = ref<PlanningMode>('adaptive')
 const durationDays = ref(14)
 const dailyMinutes = ref(45)
 const error = ref('')
+const finalCtaLabel = computed(() =>
+  props.theme === 'dark' ? '进入 Challenge Lobby' : '生成学习计划'
+)
+const availabilityLabel = computed(() =>
+  props.theme === 'dark' ? '本地可用 · 进入挑战大厅后体验增强' : '本地可用 · 生成后进入学习大厅'
+)
 
 onMounted(async () => {
   try {
@@ -78,6 +90,7 @@ async function generatePlan() {
     <ChatBox
       :loading="loading"
       :planning-mode="selectedPlanningMode"
+      :theme="theme"
       @clarify="clarify"
       @select-planning-mode="(mode) => (selectedPlanningMode = mode)"
     />
@@ -113,10 +126,10 @@ async function generatePlan() {
 
     <section class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6">
       <p v-if="error" class="text-sm font-medium text-coral">{{ error }}</p>
-      <span v-else class="signal-chip">本地可用 · 接入模型后体验增强</span>
+      <span v-else class="signal-chip">{{ availabilityLabel }}</span>
       <button class="primary-button" :disabled="!intent || generating" @click="generatePlan">
         <Loader2 v-if="generating" :size="16" class="animate-spin" aria-hidden="true" />
-        进入 Challenge Lobby
+        {{ finalCtaLabel }}
       </button>
     </section>
   </div>

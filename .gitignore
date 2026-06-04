@@ -17,6 +17,7 @@ dist/
 backend/storage/*.db
 backend/storage/*.db-*
 frontend/.env.local
+frontend/.codex-*
 
 .DS_Store
 Thumbs.db
