@@ -1219,3 +1219,508 @@ select {
     position: static;
   }
 }
+
+/* Hybrid redesign */
+.theme-light {
+  --app-bg: #ffffff;
+  --surface: rgba(255, 255, 255, 0.9);
+  --surface-strong: #ffffff;
+  --surface-soft: #f8fafc;
+  --field: #ffffff;
+  --text: #101828;
+  --muted: #566277;
+  --soft: #7a8699;
+  --line: #d9e1ea;
+  --line-strong: #c7d1dd;
+  --accent: #101828;
+  --accent-2: #22a06b;
+  --accent-soft: rgba(34, 160, 107, 0.11);
+  --glow: rgba(34, 160, 107, 0.14);
+  --shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
+  --gold: #d99a24;
+  --cyan: #22d3ee;
+  --xp: #a3e635;
+}
+
+.theme-dark {
+  --app-bg: #111418;
+  --surface: rgba(27, 32, 38, 0.88);
+  --surface-strong: #1b2026;
+  --surface-soft: #151a20;
+  --field: #111418;
+  --text: #f8fafc;
+  --muted: #a7b0bc;
+  --soft: #7f8997;
+  --line: #303a45;
+  --line-strong: #46515f;
+  --accent: #a3e635;
+  --accent-2: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
+  --glow: rgba(163, 230, 53, 0.16);
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  --gold: #f59e0b;
+  --cyan: #22d3ee;
+  --xp: #a3e635;
+}
+
+.theme-dark .space-layer {
+  opacity: 0.18;
+}
+
+.surface-card,
+.quiet-card,
+.choice-card,
+.mode-card,
+.field-shell,
+.start-preview-panel,
+.goal-input-panel,
+.focus-summary-panel,
+.challenge-lobby,
+.lobby-card,
+.activity-topbar,
+.route-map-panel,
+.mission-card,
+.honor-room-panel,
+.studio-panel,
+.answer-main,
+.question-rail,
+.quest-stage,
+.quest-detail,
+.flashcard,
+.podcast-deck,
+.transcript-card,
+.storyboard-screen,
+.storyboard-note,
+.practice-card,
+.review-card,
+.mentor-bubble,
+.project-step,
+.pool-entry-card {
+  border-radius: 8px;
+}
+
+.app-header {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+
+.brand-mark {
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--app-bg);
+}
+
+.theme-dark .brand-mark {
+  background: var(--xp);
+  color: #111418;
+}
+
+.app-nav {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  padding: 4px;
+}
+
+.app-nav a {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 999px;
+  color: var(--muted);
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.app-nav a:hover {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+@media (min-width: 820px) {
+  .app-nav {
+    display: inline-flex;
+  }
+}
+
+.theme-switch {
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.theme-switch button.is-active {
+  background: var(--accent);
+  color: var(--app-bg);
+}
+
+.theme-dark .theme-switch button.is-active {
+  color: #111418;
+}
+
+.primary-button {
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--app-bg);
+  box-shadow: 0 12px 24px var(--glow);
+}
+
+.theme-dark .primary-button {
+  color: #111418;
+}
+
+.text-button,
+.icon-button,
+.signal-chip {
+  border-color: var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.signal-chip {
+  color: var(--muted);
+}
+
+.choice-card {
+  box-shadow: none;
+}
+
+.choice-card:hover,
+.choice-card.is-active {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.choice-icon,
+.rhythm-choice-icon,
+.studio-hero-icon,
+.quest-orb,
+.honor-icon {
+  border-radius: 8px;
+}
+
+.choice-icon {
+  background: var(--surface-soft);
+  color: var(--accent-2);
+}
+
+.rhythm-choice {
+  border-radius: 8px;
+  background: var(--surface-strong);
+}
+
+.rhythm-choice:hover,
+.rhythm-choice.is-active {
+  border-color: var(--accent-2);
+  background: var(--surface-strong);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.hero-shell {
+  border-bottom: 1px solid var(--line);
+  background: var(--app-bg);
+}
+
+.start-preview-panel,
+.goal-input-panel,
+.focus-summary-panel {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.start-preview-panel {
+  padding: 22px;
+}
+
+.metric-row {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 0 14px;
+}
+
+.metric-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.metric-row strong {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 950;
+  text-align: right;
+}
+
+.focus-summary-panel {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+}
+
+.challenge-lobby {
+  display: grid;
+  gap: 24px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(115deg, var(--surface-strong), var(--surface-soft));
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.theme-dark .challenge-lobby {
+  background:
+    radial-gradient(circle at 80% 10%, rgba(34, 211, 238, 0.12), transparent 240px),
+    #1b2026;
+}
+
+@media (min-width: 900px) {
+  .challenge-lobby {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    align-items: stretch;
+    padding: 34px;
+  }
+}
+
+.lobby-copy {
+  display: grid;
+  align-content: center;
+}
+
+.lobby-card {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  padding: 22px;
+}
+
+.route-map-panel,
+.honor-room-panel,
+.activity-topbar {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+.route-node-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.route-node-card {
+  display: grid;
+  min-height: 144px;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 14px;
+  text-align: center;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.route-node-card:hover,
+.route-node-card.is-current {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.route-node-card.is-complete {
+  border-color: color-mix(in srgb, var(--accent-2) 56%, var(--line));
+}
+
+.route-node-orb {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  justify-self: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--app-bg);
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.theme-dark .route-node-orb {
+  color: #111418;
+}
+
+.route-node-card strong {
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.route-node-card small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.mission-grid {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 820px) {
+  .mission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.mission-card {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  padding: 18px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.mission-card:hover,
+.mission-card.is-active {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.honor-card {
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 16px;
+}
+
+.honor-card h3 {
+  font-size: 17px;
+  font-weight: 950;
+}
+
+.honor-card p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.honor-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+}
+
+.honor-card.tone-gold .honor-icon {
+  background: color-mix(in srgb, var(--gold) 16%, transparent);
+  color: var(--gold);
+}
+
+.honor-card.tone-orange .honor-icon {
+  background: rgba(249, 115, 22, 0.14);
+  color: #f97316;
+}
+
+.honor-card.tone-violet .honor-icon {
+  background: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+
+.honor-card.tone-blue .honor-icon {
+  background: rgba(34, 211, 238, 0.14);
+  color: var(--cyan);
+}
+
+.status-callout {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.studio-panel {
+  background: var(--surface-strong);
+}
+
+.studio-hero {
+  background:
+    radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 220px),
+    linear-gradient(135deg, #101828, #1f2937);
+}
+
+.theme-dark .studio-hero {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(34, 211, 238, 0.2), transparent 240px),
+    linear-gradient(135deg, #111418, #1b2026 62%, #0e7490);
+}
+
+.progress-track span,
+.podcast-bar span {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.pool-entry-card {
+  background: var(--surface-strong);
+}
+
+.quest-stage,
+.podcast-deck,
+.flashcard,
+.answer-main {
+  background: var(--surface-soft);
+}
+
+.question-prompt {
+  font-size: clamp(20px, 2vw, 30px);
+}
+
+@media (max-width: 640px) {
+  .start-preview-panel {
+    order: 3;
+  }
+
+  .goal-input-panel {
+    order: 2;
+  }
+
+  .challenge-lobby,
+  .route-map-panel,
+  .honor-room-panel,
+  .activity-topbar {
+    padding: 16px;
+  }
+
+  .theme-switch button {
+    padding: 0 9px;
+  }
+}

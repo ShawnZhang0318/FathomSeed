@@ -30,22 +30,22 @@ const rhythmModes: Array<{
   {
     code: 'j_mode',
     title: 'J人模式',
-    badge: '安排清楚',
-    description: '按天路线、每日任务、完成后自动打卡。',
+    badge: '清晰日程',
+    description: '按天推进，每天完成后自动打卡。',
     icon: CalendarCheck2
   },
   {
     code: 'p_mode',
     title: 'P人模式',
-    badge: '自由进入',
-    description: '生成任务池，按今天状态选择学习入口。',
+    badge: '自由任务池',
+    description: '生成多种入口，按今天状态选择。',
     icon: Compass
   },
   {
     code: 'adaptive',
     title: '自适应模式',
-    badge: '主线 + 选择',
-    description: '系统把控阶段目标，你选择今天怎么学。',
+    badge: '主线 + 今日选择',
+    description: '系统守住路线，你选择进入方式。',
     icon: Sparkles
   }
 ]
@@ -61,28 +61,47 @@ function submit() {
 </script>
 
 <template>
-  <section class="panel">
-    <div class="mx-auto max-w-6xl px-4 py-10 md:py-16">
-      <div class="mx-auto max-w-3xl text-center">
-        <span class="signal-chip">
+  <section class="hero-shell">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-8 md:grid-cols-[minmax(0,1fr)_360px] md:py-12">
+      <div class="grid content-center">
+        <span class="signal-chip w-fit">
           <Compass :size="14" aria-hidden="true" />
-          先说出一个方向
+          今日开局配置
         </span>
-        <h1 class="mt-6 text-4xl font-black leading-[1.05] tracking-[-0.045em] md:text-6xl">
-          今天想抵达哪里？
+        <h1 class="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-normal md:text-6xl">
+          选择今日开局
         </h1>
-        <p class="mx-auto mt-5 max-w-2xl text-base leading-8 muted-text md:text-lg">
-          FathomSeed 会把目标拆成学习节奏、体验入口、练习和反馈循环。不开模型也能用，接入模型后会更懂你。
+        <p class="mt-5 max-w-2xl text-base leading-8 muted-text md:text-lg">
+          把一个学习目标配置成挑战大厅、路线地图和多模式 Activity Room。你可以先选节奏，再让系统生成今天最适合进入的学习方式。
         </p>
       </div>
 
-      <div class="surface-card mx-auto mt-9 max-w-4xl overflow-hidden">
+      <aside class="start-preview-panel">
+        <p class="text-xs font-black uppercase soft-text">Preview</p>
+        <h2 class="mt-3 text-2xl font-black">挑战大厅会这样生成</h2>
+        <div class="mt-5 grid gap-3">
+          <div class="metric-row">
+            <span>今日主线</span>
+            <strong>函数与参数</strong>
+          </div>
+          <div class="metric-row">
+            <span>推荐入口</span>
+            <strong>刷题 -> 项目</strong>
+          </div>
+          <div class="metric-row">
+            <span>奖励预告</span>
+            <strong>函数徽章碎片</strong>
+          </div>
+        </div>
+      </aside>
+
+      <div class="goal-input-panel md:col-span-2">
         <div class="px-5 pt-5 md:px-7 md:pt-7">
           <label class="sr-only" for="goal">学习目标</label>
           <textarea
             id="goal"
             v-model="form.text"
-            class="min-h-44 w-full resize-none border-0 bg-transparent p-0 text-2xl font-semibold leading-10 outline-none placeholder:soft-text md:text-[32px]"
+            class="min-h-36 w-full resize-none border-0 bg-transparent p-0 text-2xl font-black leading-10 outline-none placeholder:soft-text md:text-[30px]"
             maxlength="4000"
             placeholder="例如：我想学离散数学，用来准备计算机考研"
           />
@@ -113,7 +132,10 @@ function submit() {
           </div>
         </div>
 
-        <div class="mt-5 grid gap-4 border-t px-5 py-5 md:grid-cols-[1fr_1fr_auto] md:px-7" style="border-color: var(--line); background: var(--surface-soft)">
+        <div
+          class="grid gap-4 border-t px-5 py-5 md:grid-cols-[1fr_1fr_auto] md:px-7"
+          style="border-color: var(--line); background: var(--surface-soft)"
+        >
           <label class="grid gap-2 text-sm font-bold">
             <span class="soft-text">周期</span>
             <span class="field-shell flex items-center gap-3 px-4 py-3">
@@ -145,8 +167,8 @@ function submit() {
           </label>
 
           <div class="grid items-end">
-            <button class="primary-button w-full md:min-w-40" :disabled="loading" @click="submit">
-              继续
+            <button class="primary-button w-full md:min-w-48" :disabled="loading" @click="submit">
+              生成挑战大厅
               <ArrowUpRight :size="18" aria-hidden="true" />
             </button>
           </div>

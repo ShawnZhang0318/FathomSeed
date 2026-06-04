@@ -83,16 +83,15 @@ async function generatePlan() {
     />
 
     <section v-if="intent" class="mx-auto max-w-6xl px-4 py-4">
-      <div class="quiet-card p-5">
-        <div class="flex items-start gap-3">
-          <span class="choice-icon shrink-0">
-            <Sparkles :size="20" aria-hidden="true" />
-          </span>
-          <div class="min-w-0">
-            <p class="text-sm font-semibold">{{ intent.goal_summary }}</p>
-            <div v-if="intent.questions.length" class="mt-3 grid gap-1 text-sm muted-text">
-              <p v-for="question in intent.questions" :key="question">{{ question }}</p>
-            </div>
+      <div class="focus-summary-panel">
+        <span class="choice-icon shrink-0">
+          <Sparkles :size="20" aria-hidden="true" />
+        </span>
+        <div class="min-w-0">
+          <p class="text-xs font-black uppercase soft-text">Goal Confirmed</p>
+          <h2 class="mt-2 text-xl font-black">{{ intent.goal_summary }}</h2>
+          <div v-if="intent.questions.length" class="mt-3 grid gap-1 text-sm muted-text">
+            <p v-for="question in intent.questions" :key="question">{{ question }}</p>
           </div>
         </div>
       </div>
@@ -112,12 +111,12 @@ async function generatePlan() {
       @toggle="(code) => methodStore.toggle(code)"
     />
 
-    <section class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5">
+    <section class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6">
       <p v-if="error" class="text-sm font-medium text-coral">{{ error }}</p>
       <span v-else class="signal-chip">本地可用 · 接入模型后体验增强</span>
       <button class="primary-button" :disabled="!intent || generating" @click="generatePlan">
         <Loader2 v-if="generating" :size="16" class="animate-spin" aria-hidden="true" />
-        生成计划
+        进入 Challenge Lobby
       </button>
     </section>
   </div>

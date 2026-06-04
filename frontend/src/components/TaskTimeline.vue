@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRight, Check, CheckCircle2, Clock, Circle, Play } from 'lucide-vue-next'
+import { ArrowRight, CheckCircle2, Clock, Circle, Play } from 'lucide-vue-next'
 import FeedbackButtons from './FeedbackButtons.vue'
 import type { LearningPlan, PlanTask } from '../types'
 
@@ -24,10 +24,10 @@ function experienceLabel(code: string): string {
     quest: '游戏',
     podcast: '播客',
     video: '视频',
-    cinematic: '电影',
+    cinematic: '故事',
     project_lab: '项目',
     mentor: '导师',
-    memory: '记忆'
+    memory: '闪卡'
   }
   return labels[code] ?? code
 }
@@ -59,18 +59,18 @@ function taskProgress(task: PlanTask): number {
 </script>
 
 <template>
-  <section class="relative grid gap-4 pl-5 before:absolute before:bottom-2 before:left-1.5 before:top-2 before:w-0.5 before:rounded-full before:bg-gradient-to-b before:from-indigo-500 before:via-violet-500 before:to-sky-400">
+  <section class="mission-grid">
     <article
       v-for="task in plan.tasks"
       :key="task.id"
-      class="quiet-card relative p-5 transition-all before:absolute before:left-[-22px] before:top-6 before:h-4 before:w-4 before:rounded-full before:border-[3px] before:border-white before:bg-indigo-500 before:shadow hover:-translate-y-0.5"
+      class="mission-card"
       :class="{ 'is-active': selectedTaskId === task.id }"
     >
       <button class="w-full text-left" @click="emit('select', task)">
         <div class="flex flex-wrap items-center gap-2">
-          <Check v-if="task.status === 'completed'" :size="18" class="text-emerald-500" aria-hidden="true" />
+          <CheckCircle2 v-if="task.status === 'completed'" :size="18" class="text-emerald-500" aria-hidden="true" />
           <Play v-else-if="task.status === 'in_progress'" :size="18" class="text-saffron" aria-hidden="true" />
-          <Circle v-else :size="18" class="text-slate-400" aria-hidden="true" />
+          <Circle v-else :size="18" class="soft-text" aria-hidden="true" />
           <span class="text-sm font-semibold soft-text">{{ unitLabel(task, planningMode) }}</span>
           <span class="signal-chip">
             {{ experienceLabel(task.experience_mode || task.method_code) }}
@@ -80,7 +80,7 @@ function taskProgress(task: PlanTask): number {
             {{ task.estimated_minutes }}m
           </span>
         </div>
-        <h3 class="mt-3 text-lg font-bold">{{ task.title }}</h3>
+        <h3 class="mt-3 text-lg font-black leading-snug">{{ task.title }}</h3>
         <p class="mt-2 text-sm leading-6 muted-text">{{ task.description }}</p>
         <p class="mt-3 text-xs font-semibold soft-text">{{ task.expected_outcome }}</p>
         <div class="mt-4">
@@ -93,7 +93,8 @@ function taskProgress(task: PlanTask): number {
           </div>
         </div>
       </button>
-      <div class="mt-4 flex flex-col gap-3 border-t pt-3" style="border-color: var(--line)">
+
+      <div class="mt-4 grid gap-3 border-t pt-3" style="border-color: var(--line)">
         <div class="flex flex-wrap gap-2">
           <button
             class="primary-button"

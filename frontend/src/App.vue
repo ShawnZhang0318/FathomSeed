@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { BookOpenCheck, Moon, Sun } from 'lucide-vue-next'
+import { BookOpenCheck, Moon, Sun, Trophy } from 'lucide-vue-next'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import OfflineBanner from './components/OfflineBanner.vue'
 import OnboardingView from './views/OnboardingView.vue'
 import PlanView from './views/PlanView.vue'
 import { planStore } from './stores/planStore'
 
-type ThemeMode = 'light' | 'space'
+type ThemeMode = 'light' | 'dark'
 
 const theme = ref<ThemeMode>('light')
-const themeClass = computed(() => (theme.value === 'space' ? 'theme-space' : 'theme-light'))
+const themeClass = computed(() => (theme.value === 'dark' ? 'theme-dark' : 'theme-light'))
 
 function setTheme(nextTheme: ThemeMode) {
   theme.value = nextTheme
@@ -19,8 +19,11 @@ function setTheme(nextTheme: ThemeMode) {
 onMounted(() => {
   planStore.loadCachedPlan()
   const savedTheme = localStorage.getItem('fullmind:theme')
-  if (savedTheme === 'space' || savedTheme === 'light') {
+  if (savedTheme === 'dark' || savedTheme === 'light') {
     theme.value = savedTheme
+  }
+  if (savedTheme === 'space') {
+    theme.value = 'dark'
   }
 })
 
@@ -45,22 +48,31 @@ watchEffect(() => {
             </div>
           </div>
 
-          <div class="theme-switch" aria-label="主题切换">
+          <nav v-if="planStore.plan" class="app-nav" aria-label="学习导航">
+            <a href="#learning-lobby">今日开局</a>
+            <a href="#route-map">路线</a>
+            <a href="#honor-room">
+              <Trophy :size="14" aria-hidden="true" />
+              荣誉室
+            </a>
+          </nav>
+
+          <div class="theme-switch" aria-label="面板主题切换">
             <button
               type="button"
               :class="{ 'is-active': theme === 'light' }"
               @click="setTheme('light')"
             >
               <Sun :size="15" aria-hidden="true" />
-              白昼
+              Light
             </button>
             <button
               type="button"
-              :class="{ 'is-active': theme === 'space' }"
-              @click="setTheme('space')"
+              :class="{ 'is-active': theme === 'dark' }"
+              @click="setTheme('dark')"
             >
               <Moon :size="15" aria-hidden="true" />
-              星航
+              Dark
             </button>
           </div>
         </div>

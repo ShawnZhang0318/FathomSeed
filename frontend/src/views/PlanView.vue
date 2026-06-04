@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { ArrowLeft, CalendarCheck2, Compass, RotateCcw, Sparkles } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  CalendarCheck2,
+  Compass,
+  Gamepad2,
+  Medal,
+  RotateCcw,
+  Sparkles,
+  Trophy
+} from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import ExercisePanel from '../components/ExercisePanel.vue'
 import TaskTimeline from '../components/TaskTimeline.vue'
@@ -24,13 +33,14 @@ const pivotFeedbackTypes = new Set([
 
 const plan = computed(() => planStore.plan)
 const planningMode = computed(() => plan.value?.planning_mode ?? 'adaptive')
+
 const modeMeta = computed(() => {
   if (planningMode.value === 'j_mode') {
     return {
       title: 'J人模式',
-      eyebrow: '清晰日程',
+      eyebrow: 'Quest Line',
       icon: CalendarCheck2,
-      description: '每天照着路线推进，完成当天所有任务后自动打卡。',
+      description: '按天推进，路线清楚，每天完成后自动打卡。',
       progressTitle: '每日完成度',
       progressHint: '完成当天全部入口后打卡'
     }
@@ -38,22 +48,23 @@ const modeMeta = computed(() => {
   if (planningMode.value === 'p_mode') {
     return {
       title: 'P人模式',
-      eyebrow: '自由任务池',
+      eyebrow: 'Open Pool',
       icon: Compass,
-      description: '系统准备多个学习入口，你按今天的状态自由选择。',
+      description: '系统准备任务池，你按今天的状态自由选择学习入口。',
       progressTitle: '任务池进度',
       progressHint: '完成任意入口都会训练系统偏好'
     }
   }
   return {
     title: '自适应模式',
-    eyebrow: '主线 + 自选入口',
+    eyebrow: 'Hybrid Lobby',
     icon: Sparkles,
-    description: '系统守住阶段目标，你选择今天用哪种体验进入。',
+    description: '系统守住阶段主线，你选择今天从刷题、游戏、播客、项目或闪卡进入。',
     progressTitle: '今日达标度',
     progressHint: '达到 70% 即视为今日达标'
   }
 })
+
 const dayTargetPercent = computed(() => (planningMode.value === 'adaptive' ? 70 : 100))
 const totalMinutes = computed(() =>
   plan.value?.tasks.reduce((sum, task) => sum + task.estimated_minutes, 0) ?? 0
@@ -77,12 +88,13 @@ const dayProgress = computed(() => {
   }
   return Array.from(groups.entries()).map(([dayNumber, tasks]) => {
     const total = tasks.reduce((sum, task) => sum + taskProgress(task), 0)
-    const percent = Math.round(total / tasks.length)
+    const percent = Math.round(total / Math.max(1, tasks.length))
     return {
       dayNumber,
       percent,
       isComplete: percent >= dayTargetPercent.value,
-      taskCount: tasks.length
+      taskCount: tasks.length,
+      tasks
     }
   })
 })
@@ -96,23 +108,28 @@ const recommendedTasks = computed(() => {
   if (!plan.value) return []
   const openTasks = plan.value.tasks.filter((task) => taskProgress(task) < 100)
   if (planningMode.value === 'p_mode') {
-    return openTasks.slice(0, 6)
+    return openTasks.slice(0, 5)
   }
   const dayNumber = currentDay.value?.dayNumber ?? 1
-  return plan.value.tasks.filter((task) => task.day_number === dayNumber).slice(0, 4)
+  const dayTasks = plan.value.tasks.filter((task) => task.day_number === dayNumber && taskProgress(task) < 100)
+  return (dayTasks.length ? dayTasks : openTasks).slice(0, 4)
 })
-const recommendationTitle = computed(() => {
-  if (planningMode.value === 'p_mode') return '今天想从哪里开始？'
-  if (planningMode.value === 'adaptive') return '今日主线入口'
-  return '今日任务'
-})
-const returnLabel = computed(() => (planningMode.value === 'p_mode' ? '返回任务池' : '返回计划'))
+const headlineTask = computed(() => recommendedTasks.value[0] ?? plan.value?.tasks[0] ?? null)
+const returnLabel = computed(() => (planningMode.value === 'p_mode' ? '返回任务池' : '返回 Challenge Lobby'))
 const activeActivityProgress = computed(() =>
   activeActivityTask.value ? taskProgress(activeActivityTask.value) : 0
 )
 const activeActivityLabel = computed(() =>
   activeActivityTask.value ? activityLabel(activeActivityTask.value) : '学习活动'
 )
+const honorItems = computed(() => [
+  { title: '变量徽章', status: poolProgress.value > 10 ? '已获得' : '待解锁', tone: 'green' },
+  { title: '循环徽章', status: poolProgress.value > 24 ? '已获得' : '待解锁', tone: 'green' },
+  { title: '函数徽章', status: poolProgress.value > 44 ? '今日中' : '待解锁', tone: 'gold' },
+  { title: '项目杯', status: projectCount.value ? `${projectCount.value} 个项目` : '待解锁', tone: 'blue' },
+  { title: '错因档案', status: '持续记录', tone: 'orange' },
+  { title: '复盘卡', status: '自动沉淀', tone: 'violet' }
+])
 
 watch(
   () => planStore.selectedTask?.id,
@@ -207,8 +224,8 @@ function taskProgress(task: PlanTask): number {
 function activityLabel(task: PlanTask): string {
   const labels: Record<string, string> = {
     drill: '刷题训练',
-    game: '游戏学习',
-    quest: '游戏学习',
+    game: '学习游戏',
+    quest: '学习游戏',
     podcast: '播客讲解',
     video: '短视频学习',
     cinematic: '电影故事',
@@ -217,6 +234,21 @@ function activityLabel(task: PlanTask): string {
     memory: '闪卡记忆'
   }
   return labels[task.experience_mode || task.method_code] ?? '学习活动'
+}
+
+function entryLabel(task: PlanTask): string {
+  const labels: Record<string, string> = {
+    drill: '进入刷题',
+    game: '进入游戏',
+    quest: '进入游戏',
+    podcast: '进入播客',
+    video: '进入短视频',
+    cinematic: '进入故事',
+    project_lab: '进入项目',
+    mentor: '进入对话',
+    memory: '进入闪卡'
+  }
+  return labels[task.experience_mode || task.method_code] ?? '进入学习'
 }
 
 function syncActiveActivityTask(taskId: string) {
@@ -231,7 +263,7 @@ function clampProgress(value: number): number {
 function announceDayCompletion(dayNumber: number) {
   if (!plan.value) return
   if (planningMode.value === 'p_mode') {
-    message.value = '已记录一次学习进展，任务池会继续根据你的选择调整'
+    message.value = '已记录一次学习进度，任务池会继续根据你的选择调整'
     return
   }
   const dayTasks = plan.value.tasks.filter((task) => task.day_number === dayNumber)
@@ -288,7 +320,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
 
 <template>
   <main v-if="plan && activeActivityTask" class="activity-page mx-auto max-w-7xl px-4 py-8">
-    <section class="surface-card mb-6 p-5 md:p-6">
+    <section class="activity-topbar mb-6">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex min-w-0 items-center gap-3">
           <button class="text-button shrink-0" @click="closeActivity">
@@ -297,7 +329,7 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
           </button>
           <div class="min-w-0">
             <p class="text-sm font-extrabold soft-text">{{ activeActivityLabel }}</p>
-            <h1 class="mt-1 truncate text-2xl font-black tracking-[-0.035em] md:text-4xl">
+            <h1 class="mt-1 truncate text-2xl font-black tracking-normal md:text-4xl">
               {{ activeActivityTask.title }}
             </h1>
           </div>
@@ -325,106 +357,115 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
   </main>
 
   <main v-else-if="plan" class="mx-auto max-w-6xl px-4 py-8">
-    <section>
-      <div class="surface-card mb-6 p-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <section id="learning-lobby" class="challenge-lobby">
+      <div class="lobby-copy">
+        <p class="mb-3 flex items-center gap-2 text-sm font-extrabold soft-text">
+          <component :is="modeMeta.icon" :size="16" aria-hidden="true" />
+          {{ modeMeta.eyebrow }} · {{ modeMeta.title }}
+        </p>
+        <h1 class="text-3xl font-black tracking-normal md:text-5xl">Challenge Lobby</h1>
+        <p class="mt-4 max-w-2xl text-sm leading-7 muted-text">{{ modeMeta.description }}</p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="signal-chip">V{{ plan.version }}</span>
+          <span class="signal-chip">{{ plan.daily_minutes }} 分钟/天</span>
+          <span class="signal-chip">{{ plan.generation_mode === 'local' ? '本地生成' : '智能增强' }}</span>
+        </div>
+      </div>
+      <div class="lobby-card">
+        <p class="text-xs font-black uppercase soft-text">Start Mission</p>
+        <h2 class="mt-3 text-2xl font-black">{{ headlineTask?.title ?? plan.title }}</h2>
+        <p class="mt-3 line-clamp-3 text-sm leading-7 muted-text">
+          {{ headlineTask?.description ?? plan.goal_summary }}
+        </p>
+        <div class="mt-5">
+          <div class="flex items-center justify-between text-xs font-black soft-text">
+            <span>{{ modeMeta.progressTitle }}</span>
+            <span>{{ planningMode === 'p_mode' ? poolProgress : currentDay?.percent ?? 0 }}%</span>
+          </div>
+          <div class="progress-track mt-2">
+            <span :style="{ width: `${planningMode === 'p_mode' ? poolProgress : currentDay?.percent ?? 0}%` }"></span>
+          </div>
+        </div>
+        <button
+          v-if="headlineTask"
+          class="primary-button mt-6 w-full"
+          :disabled="busyTaskId === headlineTask.id"
+          @click="startTask(headlineTask)"
+        >
+          <Gamepad2 :size="16" aria-hidden="true" />
+          {{ entryLabel(headlineTask) }}
+        </button>
+      </div>
+    </section>
+
+    <section class="mt-6 grid gap-3 sm:grid-cols-3">
+      <div class="signal-chip justify-start">任务 {{ plan.tasks.length }} 个</div>
+      <div class="signal-chip justify-start">刷题 {{ practiceCount }} 组 · 游戏 {{ gameCount }} 个</div>
+      <div class="signal-chip justify-start">项目 {{ projectCount }} 个 · {{ totalMinutes }} 分钟</div>
+    </section>
+
+    <section v-if="recommendedTasks.length" class="mt-6">
+      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-black uppercase soft-text">Today Entrances</p>
+          <h2 class="mt-2 text-2xl font-black tracking-normal">今天从哪里开始？</h2>
+          <p class="mt-2 text-sm leading-7 muted-text">{{ modeMeta.progressHint }}</p>
+        </div>
+        <button class="text-button" @click="resetPlan">
+          <RotateCcw :size="16" aria-hidden="true" />
+          重新选择目标
+        </button>
+      </div>
+      <div class="grid gap-3 md:grid-cols-2">
+        <article v-for="task in recommendedTasks" :key="task.id" class="pool-entry-card">
           <div class="min-w-0">
-            <p class="mb-2 flex items-center gap-2 text-sm font-extrabold soft-text">
-              <component :is="modeMeta.icon" :size="16" aria-hidden="true" />
-              {{ modeMeta.eyebrow }} · {{ modeMeta.title }}
+            <p class="text-xs font-black soft-text">
+              {{ activityLabel(task) }} · {{ task.estimated_minutes }} 分钟 · {{ taskProgress(task) }}%
             </p>
-            <h1 class="text-3xl font-black tracking-[-0.04em] md:text-4xl">{{ plan.title }}</h1>
-            <p class="mt-2 text-sm muted-text">
-              第 {{ plan.version }} 版 · {{ plan.daily_minutes }} 分钟/天 · {{ plan.generation_mode === 'local' ? '本地生成' : '智能增强' }}
-            </p>
-            <p class="mt-3 max-w-2xl text-sm leading-7 muted-text">{{ modeMeta.description }}</p>
+            <h3 class="mt-2 text-base font-black leading-snug">{{ task.title }}</h3>
+            <p class="mt-2 line-clamp-2 text-sm leading-6 muted-text">{{ task.description }}</p>
           </div>
-          <button class="text-button" @click="resetPlan">
-            <RotateCcw :size="16" aria-hidden="true" />
-            重新选择目标
+          <button class="primary-button" :disabled="busyTaskId === task.id" @click="startTask(task)">
+            {{ entryLabel(task) }}
           </button>
-        </div>
-      </div>
-      <div v-if="planningMode !== 'j_mode'" class="quiet-card mb-6 p-5 md:p-6">
-        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">
-              {{ planningMode === 'p_mode' ? 'Flow Pool' : 'Adaptive Today' }}
-            </p>
-            <h2 class="mt-2 text-2xl font-black tracking-[-0.035em]">{{ recommendationTitle }}</h2>
-            <p class="mt-2 text-sm leading-7 muted-text">{{ modeMeta.progressHint }}</p>
-          </div>
-          <span class="signal-chip">
-            {{ planningMode === 'p_mode' ? `任务池 ${poolProgress}%` : `今日 ${currentDay?.percent ?? 0}% / ${dayTargetPercent}%` }}
-          </span>
-        </div>
-        <div class="grid gap-3 md:grid-cols-2">
-          <article
-            v-for="task in recommendedTasks"
-            :key="task.id"
-            class="pool-entry-card"
-          >
-            <div class="min-w-0">
-              <p class="text-xs font-black soft-text">
-                {{ activityLabel(task) }} · {{ task.estimated_minutes }} 分钟 · {{ taskProgress(task) }}%
-              </p>
-              <h3 class="mt-2 text-base font-black leading-snug">{{ task.title }}</h3>
-              <p class="mt-2 line-clamp-2 text-sm leading-6 muted-text">{{ task.description }}</p>
-            </div>
-            <button class="primary-button" :disabled="busyTaskId === task.id" @click="startTask(task)">
-              进入
-            </button>
-          </article>
-        </div>
-      </div>
-      <div class="mb-6 grid gap-4 md:grid-cols-3">
-        <article class="quiet-card p-5">
-          <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">Stage 1</p>
-          <h2 class="mt-3 text-lg font-black">体验转译</h2>
-          <p class="mt-2 text-sm leading-6 muted-text">知识点会被转成播客、微电影、导师追问、短视频或互动游戏。</p>
-        </article>
-        <article class="quiet-card p-5">
-          <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">Stage 2</p>
-          <h2 class="mt-3 text-lg font-black">互动练习</h2>
-          <p class="mt-2 text-sm leading-6 muted-text">刷题、游戏任务、情景选择和错因记录形成训练闭环。</p>
-        </article>
-        <article class="quiet-card p-5">
-          <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">Stage 3</p>
-          <h2 class="mt-3 text-lg font-black">输出沉淀</h2>
-          <p class="mt-2 text-sm leading-6 muted-text">用项目、闪卡、脚本和复盘沉淀成可重复使用的学习资产。</p>
         </article>
       </div>
-      <div class="mb-6 grid gap-3 sm:grid-cols-3">
-        <div class="signal-chip justify-start">任务 {{ plan.tasks.length }} 个</div>
-        <div class="signal-chip justify-start">刷题 {{ practiceCount }} 组 · 游戏 {{ gameCount }} 个</div>
-        <div class="signal-chip justify-start">项目 {{ projectCount }} 个 · {{ totalMinutes }} 分钟</div>
-      </div>
-      <div v-if="planningMode !== 'p_mode'" class="quiet-card mb-6 p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p class="text-xs font-black uppercase tracking-[0.16em] soft-text">{{ modeMeta.progressTitle }}</p>
-            <h2 class="mt-2 text-xl font-black">
-              Day {{ currentDay?.dayNumber ?? 1 }} · {{ currentDay?.percent ?? 0 }}%
-            </h2>
-          </div>
-          <span class="signal-chip">
-            {{ currentDay?.isComplete ? '今日已自动打卡' : `还差 ${Math.max(0, dayTargetPercent - (currentDay?.percent ?? 0))}% 达标` }}
-          </span>
+    </section>
+
+    <section id="route-map" class="route-map-panel mt-8">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-black uppercase soft-text">Route Map</p>
+          <h2 class="mt-2 text-2xl font-black tracking-normal">规划路线</h2>
+          <p class="mt-2 text-sm leading-7 muted-text">保留地图征服感，但用清晰学习大厅承载，不变成后台列表。</p>
         </div>
-        <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <div
-            v-for="day in dayProgress"
-            :key="day.dayNumber"
-            class="day-progress-pill"
-            :class="{ 'is-complete': day.isComplete }"
-          >
-            <span>Day {{ day.dayNumber }}</span>
-            <strong>{{ day.percent }}%</strong>
-          </div>
-        </div>
+        <span class="signal-chip">
+          {{ planningMode === 'p_mode' ? `任务池 ${poolProgress}%` : `Day ${currentDay?.dayNumber ?? 1} · ${currentDay?.percent ?? 0}%` }}
+        </span>
       </div>
-      <div v-if="message" class="mb-4 rounded-2xl px-4 py-3 text-sm font-semibold" style="border: 1px solid var(--line); background: var(--accent-soft); color: var(--text)">
-        {{ message }}
+      <div class="route-node-grid">
+        <button
+          v-for="day in dayProgress"
+          :key="day.dayNumber"
+          class="route-node-card"
+          :class="{ 'is-complete': day.isComplete, 'is-current': day.dayNumber === currentDay?.dayNumber }"
+          @click="day.tasks[0] && startTask(day.tasks[0])"
+        >
+          <span class="route-node-orb">D{{ day.dayNumber }}</span>
+          <strong>{{ day.percent }}%</strong>
+          <small>{{ day.taskCount }} 个入口</small>
+        </button>
+      </div>
+    </section>
+
+    <section v-if="message" class="status-callout mt-6">
+      {{ message }}
+    </section>
+
+    <section class="mt-8">
+      <div class="mb-4">
+        <p class="text-xs font-black uppercase soft-text">Mission Pool</p>
+        <h2 class="mt-2 text-2xl font-black tracking-normal">全部学习入口</h2>
       </div>
       <TaskTimeline
         :plan="plan"
@@ -436,6 +477,30 @@ async function sendFeedback(payload: { task: PlanTask; eventType: string }) {
         @complete="completeTask"
         @feedback="sendFeedback"
       />
+    </section>
+
+    <section id="honor-room" class="honor-room-panel mt-10">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-black uppercase soft-text">Honor Room</p>
+          <h2 class="mt-2 flex items-center gap-2 text-2xl font-black tracking-normal">
+            <Trophy :size="24" aria-hidden="true" />
+            荣誉室
+          </h2>
+          <p class="mt-2 text-sm leading-7 muted-text">荣誉室不占首屏，只从导航进入，用来收藏徽章、错因档案、项目杯和复盘卡。</p>
+        </div>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <article v-for="item in honorItems" :key="item.title" class="honor-card" :class="`tone-${item.tone}`">
+          <span class="honor-icon">
+            <Medal :size="22" aria-hidden="true" />
+          </span>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.status }}</p>
+          </div>
+        </article>
+      </div>
     </section>
   </main>
 </template>
